@@ -1,0 +1,335 @@
+"use client";
+
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface StageData {
+  id: string;
+  stageNum: string;
+  title: string;
+  shortDesc: string;
+  buttonLabel: string;
+  strategyTitle: string;
+  strategyItems: string[];
+  deliverablesTitle: string;
+  deliverablesItems: string[];
+}
+
+export default function JourneySection() {
+  const [activeStage, setActiveStage] = useState<number>(0);
+
+  const stages: StageData[] = [
+    {
+      id: "strategy",
+      stageNum: "STAGE 01",
+      title: "Strategy",
+      shortDesc:
+        "Align leadership and prioritize AI investments, reduce shadow AI and take control of governance.",
+      buttonLabel: "StrategyMax + PMO-Max",
+      strategyTitle: "Strategy & Alignment",
+      strategyItems: [
+        "AI Readiness Assessment",
+        "AI Audits",
+        "AI Governance Strategy",
+        "AI Opportunity Discovery",
+        "AI Use Case Prioritization",
+        "Agentic Enterprise Framework",
+        "Transformation Roadmaps",
+      ],
+      deliverablesTitle: "Deliverables",
+      deliverablesItems: [
+        "AI Audit Reports",
+        "AI Transformation Roadmaps",
+        "Executive alignment workshops",
+        "Priority investment matrix",
+        "Board-ready AI strategy presentation",
+        "AI Governance — what AI can touch, decide, and own",
+      ],
+    },
+    {
+      id: "foundations",
+      stageNum: "STAGE 02",
+      title: "Foundations",
+      shortDesc:
+        "Build trusted data engineering rails and absolute compliance vectors.",
+      buttonLabel: "DeltaMax",
+      strategyTitle: "AI Foundations",
+      strategyItems: [
+        "Data Foundations & Ingestion",
+        "Data Quality, Trust & Remediation",
+        "Shadow AI Foundations",
+        "Open / Multi Models",
+        "Data Security, Governance & Privacy",
+        "Cybersecurity",
+        "Change Management",
+      ],
+      deliverablesTitle: "Platform Integration",
+      deliverablesItems: [
+        "Real-time trust score dashboard",
+        "Automated freshness monitoring",
+        "Proactive alerting",
+        "Executive AI Agents, Data Migrations",
+        "MDM & golden record management",
+        "Security Posture",
+      ],
+    },
+    {
+      id: "build",
+      stageNum: "STAGE 03",
+      title: "Build",
+      shortDesc:
+        "Engineer production-ready AI solutions that scale with strict system precision.",
+      buttonLabel: "AI Engineering",
+      strategyTitle: "AI Engineering Services",
+      strategyItems: [
+        "Open & multi-model architectures",
+        "Cloud engineering (AWS, Azure, GCP)",
+        "Agent development & orchestration",
+        "Data pipeline engineering",
+        "Testing & automation",
+      ],
+      deliverablesTitle: "Capabilities",
+      deliverablesItems: [
+        "LLM fine-tuning & deployment",
+        "Multi-agent orchestration",
+        "Intelligent automation",
+        "Real-time inference infrastructure",
+      ],
+    },
+    {
+      id: "scale",
+      stageNum: "STAGE 04",
+      title: "Scale",
+      shortDesc:
+        "Operationalize intelligent agents safely across core organizational verticals.",
+      buttonLabel: "OptiMax",
+      strategyTitle: "Scale with OptiMax",
+      strategyItems: [
+        "Marketing intelligence & MMM",
+        "Customer segmentation & activation",
+        "Audience intelligence",
+        "Budget optimization engine",
+        "Executive insights dashboard",
+      ],
+      deliverablesTitle: "Business Outcomes",
+      deliverablesItems: [
+        "propensity-to-respond rates",
+        "reduce churn",
+        "Improved cross-sell / upsell yield",
+        "Right budget, right segment, right channel",
+      ],
+    },
+    {
+      id: "optimize",
+      stageNum: "STAGE 05",
+      title: "Optimize",
+      shortDesc:
+        "Refine pipeline performance and drive measurable economic returns.",
+      buttonLabel: "AI FinOps & ROI",
+      strategyTitle: "Optimize & Govern",
+      strategyItems: [
+        "Revenue optimization  loops",
+        "Cost optimization intelligence (FinOps)",
+        "Executive decision intelligence",
+        "Continuous improvement framework ",
+      ],
+      deliverablesTitle: "Measurement",
+      deliverablesItems: [
+        "Business KPI dashboards",
+        "Executive scorecards",
+        "ROI attribution modeling",
+        "Board-level AI performance reporting",
+      ],
+    },
+  ];
+
+  const currentStageData = stages[activeStage];
+
+  return (
+    <section
+      id="journey"
+      className="w-full max-w-7xl mx-auto px-4 py-24 text-left scroll-mt-24"
+    >
+      {/* Editorial Title Section */}
+      <div className="space-y-4 mb-20 max-w-5xl">
+        <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-black">
+          THE TRANSFORMATION JOURNEY
+        </span>
+        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black  uppercase leading-[0.95] max-w-5xl">
+          A Structured Path From AI <br />
+          Experimentation to Enterprise Value
+        </h2>
+        <p className="text-base md:text-lg text-zinc-500 dark:text-zinc-900 font-dark max-w-3xl leading-relaxed pt-2">
+          Every successful AI transformation follows a journey. Katalyst Street
+          provides the expertise, frameworks, and platforms required at every
+          structural layer.
+        </p>
+      </div>
+
+      {/* DASHBOARD CONTAINER GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start w-full">
+        {/* LEFT NAV PANEL: Sticky Stepper Controls (4 Columns) */}
+        <div className="lg:col-span-4 lg:sticky lg:top-32 flex flex-col gap-2 relative z-20">
+          {stages.map((stage, index) => {
+            const isActive = activeStage === index;
+            return (
+              <button
+                key={stage.id}
+                onClick={() => setActiveStage(index)}
+                className={`w-full p-5 rounded-2xl border text-left flex flex-col justify-center relative transition-all duration-300 outline-none overflow-hidden min-h-[96px] group group-nav-item
+                  ${
+                    isActive
+                      ? "border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/20 shadow-md shadow-black/[0.01]"
+                      : "border-transparent bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900/10"
+                  }
+                `}
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                {/* Smooth Animated Accent Pill Background */}
+                {isActive && (
+                  <motion.div
+                    layoutId="journeyNavIndicator"
+                    className="absolute inset-0 bg-zinc-100/60 dark:bg-zinc-900/30 border-l-2 border-amber-500 -z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 35 }}
+                  />
+                )}
+
+                <span
+                  className={`text-[9px] font-black tracking-widest uppercase mb-1 transition-colors duration-300
+                  ${isActive ? "text-amber-500" : "text-zinc-400 dark:text-zinc-600 group-hover:text-zinc-500"}`}
+                >
+                  {stage.stageNum}
+                </span>
+                <h3
+                  className={`text-xl font-black tracking-tight uppercase leading-none transition-colors duration-300
+                  ${isActive ? "text-black dark:text-white" : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-400"}`}
+                >
+                  {stage.title}
+                </h3>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* RIGHT DISPLAY VIEWPORT: Interactive Content Panel (8 Columns) */}
+        <div className="lg:col-span-8 bg-zinc-50/50 dark:bg-zinc-950/10 border border-zinc-200/60 dark:border-zinc-900 rounded-3xl p-8 md:p-12 min-h-[540px] flex flex-col justify-between shadow-sm relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeStage}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full flex flex-col justify-between flex-1"
+            >
+              {/* Top Summary Info Segment */}
+              <div className="space-y-4 max-w-3xl mb-10">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-[10px] font-black tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+                    {currentStageData.stageNum}
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/5 text-[9px] font-bold tracking-wider text-amber-600 dark:text-amber-500 uppercase">
+                    {currentStageData.buttonLabel}
+                  </span>
+                </div>
+                <h4 className="text-2xl md:text-3xl font-black text-black dark:text-white tracking-tight uppercase leading-none">
+                  {currentStageData.title} Paradigm
+                </h4>
+                <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-light leading-relaxed">
+                  {currentStageData.shortDesc}
+                </p>
+              </div>
+
+              {/* Bottom Multi-Column Details Matrix */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-zinc-200/60 dark:border-zinc-800/60 items-start w-full">
+                {/* Column Left: Focus Fields */}
+                <div className="space-y-4">
+                  <h5 className="text-[11px] font-black tracking-widest text-amber-500 uppercase flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-amber-500" />
+                    {currentStageData.strategyTitle}
+                  </h5>
+                  <ul className="space-y-3">
+                    {currentStageData.strategyItems.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="text-xs md:text-sm font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-2"
+                      >
+                        <span className="text-amber-500/70 font-mono text-xs select-none">
+                          →
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Column Right: Deliverable Metrics */}
+                <div className="space-y-4">
+                  <h5 className="text-[11px] font-black tracking-widest text-zinc-400 dark:text-zinc-500 uppercase flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-600" />
+                    {currentStageData.deliverablesTitle}
+                  </h5>
+                  <ul className="space-y-3">
+                    {currentStageData.deliverablesItems.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="text-xs md:text-sm font-light text-zinc-500 dark:text-zinc-400 flex items-start gap-2 leading-tight"
+                      >
+                        <span className="text-zinc-400 dark:text-zinc-600 font-mono text-xs select-none pt-0.5">
+                          ↳
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Quick Click Action Indicator Panel */}
+          <div className="flex items-center justify-end gap-2 mt-8 pt-6 border-t border-zinc-200/40 dark:border-zinc-900/60 w-full">
+            <button
+              onClick={() => setActiveStage((prev) => Math.max(0, prev - 1))}
+              disabled={activeStage === 0}
+              className="p-2 rounded-full border border-zinc-200 dark:border-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-400 hover:text-black dark:hover:text-white transition-all outline-none"
+            >
+              ←
+            </button>
+            <div className="flex gap-1 px-2">
+              {stages.map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1 rounded-full transition-all duration-300 ${i === activeStage ? "w-4 bg-amber-500" : "w-1 bg-zinc-300 dark:bg-zinc-800"}`}
+                />
+              ))}
+            </div>
+            <button
+              onClick={() =>
+                setActiveStage((prev) => Math.min(stages.length - 1, prev + 1))
+              }
+              disabled={activeStage === stages.length - 1}
+              className="p-2 rounded-full border border-zinc-200 dark:border-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-400 hover:text-black dark:hover:text-white transition-all outline-none"
+            >
+              →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Separator Section Bottom Anchor */}
+      <div className="space-y-4 max-w-5xl pt-32 border-t border-zinc-200/40 dark:border-zinc-900 mt-32 w-full">
+        <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-amber-500">
+          PURPOSE-BUILT PLATFORMS
+        </span>
+        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black dark:text-white uppercase leading-[0.95] max-w-6xl">
+          Three Platforms Powering <br /> Enterprise AI Transformation
+        </h2>
+        <p className="text-base md:text-lg font-light max-w-3xl leading-relaxed pt-2 text-zinc-500 dark:text-zinc-400">
+          Proprietary platforms purpose-built for enterprise AI — not bolted-on
+          features, but purpose-engineered solutions.
+        </p>
+      </div>
+    </section>
+  );
+}
