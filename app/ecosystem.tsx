@@ -152,7 +152,7 @@ export default function EcosystemSection() {
           repeat: Infinity,
           repeatType: "loop" as const,
           duration: 30,
-          ease: "linear",
+          ease: "linear" as const,
         },
       },
     },

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 
 interface TeamMember {
@@ -80,15 +80,17 @@ export default function TeamSection() {
     },
   ];
 
-  const containerVariants = {
-    initial: { opacity: 0 },
+  const containerVariants: Variants = {
+    initial: { opacity: 0, y: 20 },
     animate: {
       opacity: 1,
-      transition: { staggerChildren: 0.15 },
+      y: 0,
+      transition: { duration: 0.4, ease: "easeOut" },
     },
   };
 
-  const cardVariants = {
+  // ⚡ FIXED: Added explicit 'Variants' type allocation to appease strict v12 typing engines
+  const cardVariants: Variants = {
     initial: { opacity: 0, y: 40 },
     animate: {
       opacity: 1,
@@ -140,7 +142,7 @@ export default function TeamSection() {
             {/* Header Identity Row */}
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                {/* ⚡ STATIONED IMAGE AVATAR CONTAINER */}
+                {/* STATIONED IMAGE AVATAR CONTAINER */}
                 <div className="relative w-14 h-14 rounded-full overflow-hidden border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100 dark:bg-zinc-900 flex-shrink-0 shadow-sm">
                   <Image
                     src={member.url}
