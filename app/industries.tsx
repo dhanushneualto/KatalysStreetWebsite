@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface IndustryCard {
   title: string;
   bullets: string[];
+  imgSrc: string;
 }
 
 interface MatrixColumn {
@@ -18,6 +20,7 @@ export default function IndustriesSection() {
   const industriesData: IndustryCard[] = [
     {
       title: "Insurance",
+      imgSrc: "/insurance.png",
       bullets: [
         "Customer Acquisition & Retention",
         "Claims Intelligence",
@@ -28,6 +31,7 @@ export default function IndustriesSection() {
     },
     {
       title: "Financial Services",
+      imgSrc: "/finance.png",
       bullets: [
         "Risk Intelligence",
         "Marketing Optimization",
@@ -39,6 +43,7 @@ export default function IndustriesSection() {
     },
     {
       title: "Healthcare",
+      imgSrc: "/healthcare.png",
       bullets: [
         "Patient Engagement Intelligence",
         "Operations Optimization",
@@ -47,6 +52,7 @@ export default function IndustriesSection() {
     },
     {
       title: "Retail",
+      imgSrc: "/retail.png",
       bullets: [
         "Marketing Intelligence",
         "Customer Intelligence",
@@ -56,6 +62,7 @@ export default function IndustriesSection() {
     },
     {
       title: "Manufacturing",
+      imgSrc: "/manufacturing.png",
       bullets: [
         "Predictive Maintenance",
         "Ontology Engineering",
@@ -66,6 +73,7 @@ export default function IndustriesSection() {
     },
     {
       title: "Logistics & Supply Chain",
+      imgSrc: "/logistics.png",
       bullets: [
         "Demand Forecasting",
         "Routing Optimization",
@@ -75,6 +83,7 @@ export default function IndustriesSection() {
     },
     {
       title: "Media & Gaming",
+      imgSrc: "/media.png",
       bullets: [
         "Marketing Optimization",
         "Fraud & Risk Detection",
@@ -85,7 +94,6 @@ export default function IndustriesSection() {
     },
   ];
 
-  // Raw comparison data metrics matrix
   const featureList = [
     "Strategy",
     "Engineering",
@@ -154,6 +162,24 @@ export default function IndustriesSection() {
       transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
     },
   };
+  const listContainerVariants = {
+    initial: {},
+    animate: {
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.2,
+      },
+    },
+  };
+  const rowLineVariants = {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: 1,
+      transition: { duration: 0.4, ease: "linear" },
+    },
+  };
+
+  const [expandedIdx, setExpandedIdx] = useState<number>(0);
 
   return (
     <section
@@ -174,43 +200,103 @@ export default function IndustriesSection() {
         </p>
       </div>
 
-      {/* Industries Matrix Grid Layout */}
-      <motion.div
-        variants={containerVariants}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, margin: "-60px" }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch"
-      >
-        {industriesData.map((industry, idx) => (
-          <motion.div
-            key={idx}
-            variants={itemVariants}
-            className="bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-8 space-y-6 flex flex-col justify-start"
-          >
-            <h3 className="text-xl font-black text-black dark:text-white tracking-tight uppercase">
-              {industry.title}
-            </h3>
-            <ul className="space-y-3.5 flex-1">
-              {industry.bullets.map((bullet, bIdx) => (
-                <li
-                  key={bIdx}
-                  className="text-sm font-light text-zinc-600 dark:text-zinc-400 leading-relaxed flex items-start gap-2"
-                >
-                  <span className="text-zinc-300 dark:text-zinc-700 select-none pt-0.5">
-                    •
-                  </span>
-                  <span>{bullet}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        ))}
-      </motion.div>
+      {/* 🚀 FIXED ACCORDION DECK: Images serve as full-card design backdrops */}
+      <div className="flex flex-col lg:flex-row gap-4 w-full h-auto lg:h-[460px] items-stretch overflow-visible">
+        {industriesData.map((industry, idx) => {
+          const isExpanded = expandedIdx === idx;
+          return (
+            <motion.div
+              key={idx}
+              onClick={() => setExpandedIdx(idx)}
+              animate={{
+                width: isExpanded ? "46%" : "9%",
+              }}
+              transition={{
+                duration: 0.6,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="cursor-pointer rounded-3xl p-8 border text-left flex flex-col justify-between relative overflow-hidden flex-shrink-0 w-full lg:w-auto border-zinc-200/60 dark:border-zinc-800/40 group shadow-sm bg-zinc-900"
+            >
+              {/* 🛠️ BACKDROP IMAGE COMPONENT LAYERS */}
+              <div className="absolute inset-0 z-0 select-none pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                <Image
+                  src={industry.imgSrc}
+                  alt={`${industry.title} background visual`}
+                  fill
+                  priority
+                  className="object-cover"
+                />
+                {/* Clean dark scrim overlay protector to ensure your text content pops perfectly */}
+                <div
+                  className={`absolute inset-0 bg-black transition-opacity duration-300 ${isExpanded ? "opacity-75" : "opacity-45 dark:opacity-60"}`}
+                />
+              </div>
 
-      {/* ⚡ NEW NODE: THE KATALYST DIFFERENCE MATRIX PANEL */}
+              {/* Top Meta Layout Anchor Wrapper */}
+              <div
+                className={`flex items-start relative z-10 ${!isExpanded ? "lg:h-full lg:items-center" : ""}`}
+              >
+                <h3
+                  className={`text-xl font-black tracking-tight uppercase select-none transition-all duration-300 text-white ${
+                    !isExpanded
+                      ? "lg:[writing-mode:vertical-lr] lg:rotate-180 lg:my-auto"
+                      : ""
+                  }`}
+                >
+                  {industry.title}
+                </h3>
+
+                <div className="absolute top-3 right-3 w-8 h-8 rounded-full border border-zinc-300/80 dark:border-zinc-700 flex items-center justify-center bg-white dark:bg-zinc-900 select-none shadow-sm z-20 pointer-events-none">
+                  <motion.svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2.5}
+                    stroke="currentColor"
+                    animate={{ rotate: isExpanded ? 45 : 0 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="w-4 h-4 text-zinc-600 dark:text-zinc-400"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                    />
+                  </motion.svg>
+                </div>
+              </div>
+
+              {/* Collapsible Content Text Window Block */}
+              <motion.div
+                initial={false}
+                animate={{
+                  opacity: isExpanded ? 1 : 0,
+                  height: isExpanded ? "auto" : 0,
+                }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="overflow-hidden mt-6 lg:mt-0 relative z-10"
+              >
+                <ul className="space-y-3.5 max-w-xl">
+                  {industry.bullets.map((bullet, bIdx) => (
+                    <li
+                      key={bIdx}
+                      className="text-sm font-medium text-zinc-100 dark:text-zinc-200 leading-relaxed flex items-start gap-2.5 drop-shadow-sm"
+                    >
+                      <span className="text-zinc-400 select-none pt-0.5">
+                        •
+                      </span>
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* THE KATALYST DIFFERENCE MATRIX PANEL */}
       <div className="mt-32 pt-16 border-t border-zinc-100/10 space-y-12 w-full">
-        {/* Module Text Header */}
         <div className="max-w-5xl space-y-4">
           <span className="text-[10px] font-black tracking-[0.2em] text-black uppercase block">
             THE KATALYST DIFFERENCE
@@ -238,44 +324,52 @@ export default function IndustriesSection() {
             <motion.div
               key={cIdx}
               variants={itemVariants}
+              whileHover={
+                column.isKatalyst ? { scale: 1.02, y: -4 } : { scale: 1.01 }
+              }
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className={`rounded-2xl p-6 flex flex-col justify-start space-y-6 text-left border ${
                 column.isKatalyst
-                  ? "bg-zinc-50/50 dark:bg-zinc-900/20 border-amber-500/40 shadow-xl shadow-black/[0.01]"
+                  ? "bg-zinc-50/50 dark:bg-zinc-900/20 border-zinc-500/40 shadow-xl shadow-black/[0.01]"
                   : "bg-zinc-50 dark:bg-zinc-900/10 border-zinc-200/60 dark:border-zinc-800/40"
               }`}
             >
               <h4
-                className={`text-sm font-black tracking-wide uppercase ${column.isKatalyst ? "text-amber-500" : "text-zinc-500 dark:text-zinc-400"}`}
+                className={`text-sm font-black tracking-wide uppercase ${column.isKatalyst ? "text-zinc-900" : "text-zinc-900 dark:text-zinc-900"}`}
               >
                 {column.name}
               </h4>
 
-              <ul className="space-y-4 w-full flex-1">
+              <motion.ul
+                variants={listContainerVariants}
+                className="space-y-4 w-full flex-1"
+              >
                 {featureList.map((feature, fIdx) => {
                   const hasFeature = column.features[feature];
                   return (
-                    <li
+                    <motion.li
                       key={fIdx}
+                      variants={rowLineVariants}
                       className={`flex items-center gap-3 text-sm pb-3 border-b border-zinc-200/40 dark:border-zinc-800/40 last:border-none last:pb-0 ${
                         hasFeature
-                          ? "text-black dark:text-white font-bold"
+                          ? "text-black  font-bold"
                           : "text-zinc-400 dark:text-zinc-600 font-light"
                       }`}
                     >
                       {hasFeature ? (
-                        <span className="text-emerald-500 font-bold text-xs select-none">
+                        <span className="text-zinc-900 font-bold text-xs select-none block">
                           ✓
                         </span>
                       ) : (
-                        <span className="text-zinc-300 dark:text-zinc-800 font-light text-xs select-none">
+                        <span className="text-zinc-300 dark:text-zinc-800 font-light text-xs select-none block opacity-50">
                           ✕
                         </span>
                       )}
                       <span>{feature}</span>
-                    </li>
+                    </motion.li>
                   );
                 })}
-              </ul>
+              </motion.ul>
             </motion.div>
           ))}
         </motion.div>

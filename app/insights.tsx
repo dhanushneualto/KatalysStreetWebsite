@@ -9,12 +9,14 @@ interface WhitePaper {
   readTime: string;
   title: string;
   desc: string;
+  url?: string; // ⚡ Added optional link path property mapping field
 }
 
 interface BlogNote {
   meta: string;
   title: string;
   sub?: string;
+  url?: string;
 }
 
 export default function InsightsSection() {
@@ -35,6 +37,7 @@ export default function InsightsSection() {
       title:
         "From Shadow AI to Agentic Intelligence: The C-Suite Playbook for 2026",
       desc: "A practical governance roadmap for boards and executives confronting unsanctioned AI usage across their organizations.",
+      url: "https://www.katalyststreet.com/post/from-shadow-ai-to-agentic-intelligence-the-c-suite-playbook-for-2026", // ⚡ Added click redirection path link destination
     },
     {
       tag: "OptiMax · Executive Playbook",
@@ -43,6 +46,7 @@ export default function InsightsSection() {
       title:
         "The Executive Playbook: Transforming Marketing from a Cost Center to an AI-Driven Profitability Engine",
       desc: "How AI-native revenue intelligence repositions marketing as a measurable profit driver.",
+      url: "https://www.katalyststreet.com/post/the-executive-playbook-transforming-marketing-from-a-cost-center-to-an-ai-driven-profitability-engi",
     },
     {
       tag: "OptiMax · Digital Strategy",
@@ -51,6 +55,7 @@ export default function InsightsSection() {
       title:
         "How Can Data and AI Transform Marketing Organizations in the Digital Age?",
       desc: "A framework for modernizing marketing operations with data and AI at the core.",
+      url: "https://www.katalyststreet.com/post/how-can-data-and-ai-transform-marketing-organizations-in-the-digital-age",
     },
     {
       tag: "DeltaMax · Data Trust",
@@ -59,6 +64,7 @@ export default function InsightsSection() {
       title:
         "Is Your Data Pipeline a Black Box? How DeltaMax Illuminates Your Data Quality",
       desc: "Why 'unknown unknowns' in enterprise pipelines are the real threat to AI investment — and how proactive monitoring changes the equation.",
+      url: "https://www.katalyststreet.com/post/is-your-data-pipeline-a-black-box-how-deltamax-illuminates-your-data-quality",
     },
   ];
 
@@ -68,32 +74,38 @@ export default function InsightsSection() {
       title:
         "The Multi-Model Imperative: Operationalizing Multi-Model AI Strategies",
       sub: "A CXO + Engineering Playbook for 2026",
+      url: "https://www.katalyststreet.com/post/the-multi-model-imperative",
     },
     {
       meta: "MAY 29, 2026 · 5 MIN READ",
       title: "The Executive Framework for AI-Era Program Management",
       sub: "Framework · Program Governance",
+      url: "https://www.katalyststreet.com/post/the-executive-framework-for-ai-era-program-management",
     },
     {
       meta: "MAY 28, 2026 · 5 MIN READ",
       title:
         "The Rise of the Architectural CEO: Moving Past the AI Hype into Structural Reinvention",
       sub: "Leadership · Strategy",
+      url: "https://www.katalyststreet.com/post/the-rise-of-the-architectural-ceo-moving-past-the-ai-hype-into-structural-reinvention",
     },
     {
       meta: "TREND WATCH",
       title: "The Rise of Strategic Human Capital",
       sub: "Human Capital · AI",
+      url: "https://www.katalyststreet.com/post/trend-watch-the-rise-of-strategic-human-capital",
     },
     {
       meta: "CASE STUDY",
       title: "Operationalizing Open Models in the Enterprise",
       sub: "LLM Strategy",
+      url: "https://www.katalyststreet.com/post/case-study-operationalizing-open-models-in-the-enterprise",
     },
     {
       meta: "FINANCIAL SERVICES",
       title: "Operationalizing Financial Services AI",
       sub: "Industry Playbook",
+      url: "https://www.katalyststreet.com/post/operationalizing-financial-services-ai",
     },
   ];
 
@@ -121,7 +133,6 @@ export default function InsightsSection() {
           Strategic Insights
         </h2>
       </div>
-      {/* FEATURED WHITE PAPERS CAROUSEL SLIDER */}
       <div className="space-y-6 w-full">
         <span className="text-[10px] font-black tracking-[0.25em] text-zinc-900 uppercase block pl-1">
           FEATURED WHITE PAPERS
@@ -138,15 +149,15 @@ export default function InsightsSection() {
               className="space-y-6 max-w-4xl"
             >
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-zinc-400 block">
+                <span className="text-xs font-bold text-zinc-900 block">
                   {whitePapers[currentSlide].tag ||
                     `${whitePapers[currentSlide].date} · ${whitePapers[currentSlide].readTime}`}
                 </span>
-                <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black dark:text-white uppercase leading-tight">
+                <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black  uppercase leading-tight">
                   {whitePapers[currentSlide].title}
                 </h3>
               </div>
-              <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-light leading-relaxed max-w-3xl">
+              <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-900 font-dark leading-relaxed max-w-3xl">
                 {whitePapers[currentSlide].desc}
               </p>
             </motion.div>
@@ -171,7 +182,7 @@ export default function InsightsSection() {
                     onClick={() => setCurrentSlide(idx)}
                     className={`h-1.5 rounded-full cursor-pointer transition-all duration-300 ${
                       currentSlide === idx
-                        ? "w-6 bg-amber-500"
+                        ? "w-6 bg-zinc-500"
                         : "w-1.5 bg-zinc-300 dark:bg-zinc-800"
                     }`}
                   />
@@ -186,9 +197,15 @@ export default function InsightsSection() {
               </button>
             </div>
 
-            <span className="text-xs font-bold text-amber-500 cursor-pointer hover:underline uppercase tracking-wider">
+            {/* ⚡ UPDATED: Dynamically changes target destination anchor path link depending on slide status */}
+            <a
+              href={whitePapers[currentSlide].url || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold text-zinc-900 cursor-pointer hover:underline uppercase tracking-wider"
+            >
               Read White Paper →
-            </span>
+            </a>
           </div>
         </div>
       </div>
@@ -196,34 +213,42 @@ export default function InsightsSection() {
       {/* BLOGS & STRATEGY NOTES MATRIX (PLACED BELOW THE CAROUSEL) */}
       <div className="mt-32 space-y-8 w-full">
         <div className="flex justify-between items-baseline w-full">
-          <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black dark:text-white uppercase leading-none">
+          <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black  uppercase leading-none">
             Blogs & Strategy Notes
           </h3>
-          <span className="text-xs font-bold text-amber-500 cursor-pointer hover:underline uppercase tracking-wider whitespace-nowrap">
+          <a
+            href="https://www.katalyststreet.com/blog"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-bold text-zinc-900 cursor-pointer hover:underline uppercase tracking-wider whitespace-nowrap"
+          >
             View All Strategic Insights →
-          </span>
+          </a>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full items-stretch cursor-pointer">
           {blogNotes.map((note, idx) => (
-            <div
+            <a
               key={idx}
+              href={note.url || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-2xl p-6 flex flex-col justify-between space-y-4 transition-shadow hover:shadow-md"
             >
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold text-amber-500 tracking-wide uppercase block">
+              <div className="space-y-2 ">
+                <span className="text-[10px] font-bold text-zinc-900 tracking-wide uppercase block ">
                   {note.meta}
                 </span>
-                <h4 className="text-base font-black text-black dark:text-white tracking-tight leading-snug">
+                <h4 className="text-base font-black text-black  tracking-tight leading-snug">
                   {note.title}
                 </h4>
               </div>
               {note.sub && (
-                <span className="text-xs text-zinc-400 dark:text-zinc-500 font-medium tracking-wide">
+                <span className="text-xs text-zinc-400 dark:text-zinc-900 font-medium tracking-wide">
                   {note.sub}
                 </span>
               )}
-            </div>
+            </a>
           ))}
         </div>
       </div>

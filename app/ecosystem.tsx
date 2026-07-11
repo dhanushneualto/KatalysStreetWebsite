@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 interface PartnerCard {
   name: string;
   role: string;
-  logoText: string;
-  logoBg: string;
+  logoSrc: string;
 }
 
 interface CaseStudyMatrix {
@@ -23,73 +24,60 @@ interface CaseStudyMatrix {
 }
 
 export default function EcosystemSection() {
+  const [activeStudy, setActiveStudy] = useState<CaseStudyMatrix | null>(null);
+
+  // ⚡ FIXED: Mounted lifecycle tracking variable prevents the Hydration/Portal runtime crash
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   const strategicPartners: PartnerCard[] = [
     {
       name: "Google Cloud",
       role: "AI Frontier Partner & Hyperscaler",
-      logoText: "GC",
-      logoBg: "bg-blue-600",
+      logoSrc: "/gc.png",
     },
     {
       name: "Anthropic",
       role: "AI Frontier Partner",
-      logoText: "AN",
-      logoBg: "bg-orange-700",
+      logoSrc: "/anthropic.png",
     },
-    {
-      name: "Databricks",
-      role: "Data Platform",
-      logoText: "DB",
-      logoBg: "bg-red-600",
-    },
-    {
-      name: "Snowflake",
-      role: "Data Platform",
-      logoText: "SF",
-      logoBg: "bg-sky-500",
-    },
-    {
-      name: "Tally",
-      role: "Finance Partner",
-      logoText: "TY",
-      logoBg: "bg-purple-600",
-    },
+    { name: "Databricks", role: "Data Platform", logoSrc: "/databricks.png" },
+    { name: "Snowflake", role: "Data Platform", logoSrc: "/snowflake.png" },
+    { name: "Tally", role: "Finance Partner", logoSrc: "/tally.png" },
   ];
 
   const executionPartners: PartnerCard[] = [
     {
       name: "AIVanta",
       role: "AI Consulting Partner",
-      logoText: "AV",
-      logoBg: "bg-orange-600",
+      logoSrc: "/aivantanew.png",
     },
     {
       name: "NeuAlto",
       role: "AI Engineering & Managed Services",
-      logoText: "NA",
-      logoBg: "bg-indigo-600",
+      logoSrc: "/neualto.png",
     },
     {
       name: "Datadvise",
       role: "Market Research & Advisory",
-      logoText: "DV",
-      logoBg: "bg-blue-800",
+      logoSrc: "/datadvice.png",
     },
     {
       name: "Origins.AI",
       role: "AI Product & Engineering",
-      logoText: "OA",
-      logoBg: "bg-emerald-600",
+      logoSrc: "/origins.png",
     },
     {
       name: "Neuroagent.AI",
       role: "AI Engineering",
-      logoText: "NG",
-      logoBg: "bg-amber-600",
+      logoSrc: "/logos/neuroagent.png",
     },
   ];
 
-  // Raw Content Matrix for the Case Studies Deck
   const caseStudiesData: CaseStudyMatrix[] = [
     {
       tag: "BOUTIQUE C-SUITE ADVISORY — OPTIMIZE + BUILD",
@@ -158,7 +146,7 @@ export default function EcosystemSection() {
 
   const marqueeVariants = (direction: "left" | "right") => ({
     animate: {
-      x: direction === "left" ? [0, -1200] : [-1200, 0],
+      x: direction === "left" ? [0, -1640] : [-1640, 0],
       transition: {
         x: {
           repeat: Infinity,
@@ -171,98 +159,81 @@ export default function EcosystemSection() {
   });
 
   const renderPartnerRow = (
+    titleText: string,
     items: PartnerCard[],
     direction: "left" | "right",
   ) => {
-    const duplicatedItems = [...items, ...items, ...items];
+    const duplicatedItems = [...items, ...items, ...items, ...items];
     return (
-      <div className="w-full overflow-hidden relative py-2 mask-gradient">
-        <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white dark:from-transparent to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white dark:from-transparent to-transparent z-10 pointer-events-none" />
-        <motion.div
-          className="flex gap-4 w-max"
-          variants={marqueeVariants(direction)}
-          animate="animate"
-        >
-          {duplicatedItems.map((partner, idx) => (
-            <div
-              key={idx}
-              className="flex items-center gap-4 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-800/60 rounded-xl p-4 min-w-[280px] select-none"
-            >
+      <div
+        className="bg-zinc-50/50 dark:bg-zinc-900/10 border-y border-zinc-200/60 dark:border-zinc-800/40 py-5 px-8 md:px-24 flex items-center justify-between gap-8 relative left-1/2 right-1/2"
+        style={{ width: "100vw", marginLeft: "-50vw", marginRight: "-50vw" }}
+      >
+        <div className="w-44 flex-shrink-0">
+          <span className="text-xs font-black tracking-[0.25em] text-zinc-900 dark:text-zinc-400 uppercase block">
+            {titleText}
+          </span>
+        </div>
+        <div className="w-[1px] h-12 bg-zinc-200 dark:bg-zinc-800 flex-shrink-0" />
+        <div className="flex-grow overflow-hidden relative py-1">
+          <motion.div
+            className="flex gap-12 w-max items-center"
+            variants={marqueeVariants(direction)}
+            animate="animate"
+          >
+            {duplicatedItems.map((partner, idx) => (
               <div
-                className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-xs text-white flex-shrink-0 ${partner.logoBg}`}
+                key={idx}
+                className="flex items-center gap-4 select-none flex-shrink-0 w-[280px]"
               >
-                {partner.logoText}
+                <div className="w-24 h-10 relative flex-shrink-0 flex items-center justify-center">
+                  <Image
+                    src={partner.logoSrc}
+                    alt={partner.name}
+                    width={55}
+                    height={55}
+                    className="object-contain object-left"
+                  />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-sm font-bold text-zinc-900 tracking-tight leading-none">
+                    {partner.name}
+                  </span>
+                  <span className="text-[10px] font-medium text-zinc-500 tracking-wide uppercase mt-1.5 leading-none">
+                    {partner.role}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col text-left">
-                <span className="text-sm font-black text-black dark:text-white tracking-tight">
-                  {partner.name}
-                </span>
-                <span className="text-[10px] font-medium text-zinc-400 tracking-wide uppercase mt-0.5">
-                  {partner.role}
-                </span>
-              </div>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     );
-  };
-
-  // Framer Motion Container orchestration settings for staggering children cards
-  const staggerContainerVariants = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2, // ⚡ Creates the requested 'one after another' delay sequence
-      },
-    },
-  };
-
-  const cardItemVariants = {
-    initial: { opacity: 0, y: 40 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
-    },
   };
 
   return (
     <section
       id="ecosystem"
-      className="w-full max-w-7xl mx-auto px-4 py-24 text-left scroll-mt-24"
+      className="w-full max-w-7xl mx-auto px-4 py-24 text-left scroll-mt-24 overflow-visible"
     >
       {/* Header Typography Group */}
       <div className="space-y-4 mb-20 max-w-5xl">
         <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-black">
-          PARTNER NETWORK
+          PARTNERSHIP ECOSYSTEM
         </span>
-        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black  uppercase leading-[0.95] max-w-6xl">
+        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black uppercase leading-[0.95]">
           Enterprise AI Requires <br /> An Ecosystem
         </h2>
-        <p className="text-base md:text-lg text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl leading-relaxed pt-2">
+        <p className="text-base md:text-lg text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl pt-2">
           No single company can deliver enterprise transformation alone.
           Katalyst Street orchestrates the right mix of cloud, data, and
-          execution partners — with new partnerships added as they're finalized.
+          execution partners.
         </p>
       </div>
 
-      {/* Marquee Streams Content Structure Area */}
-      <div className="space-y-12 w-full">
-        <div className="space-y-4">
-          <span className="text-[10px] font-black tracking-[0.25em] text-zinc-900 uppercase block pl-2">
-            STRATEGIC PARTNERSHIPS
-          </span>
-          {renderPartnerRow(strategicPartners, "left")}
-        </div>
-        <div className="space-y-4">
-          <span className="text-[10px] font-black tracking-[0.25em] text-zinc-900 uppercase block pl-2">
-            EXECUTION PARTNERSHIPS
-          </span>
-          {renderPartnerRow(executionPartners, "right")}
-        </div>
+      <div className="space-y-4 w-full relative z-20">
+        {renderPartnerRow("Strategic Partnerships", strategicPartners, "left")}
+        {renderPartnerRow("Execution Partnerships", executionPartners, "right")}
       </div>
 
       {/* CASE STUDIES PARENT ZONE */}
@@ -271,47 +242,39 @@ export default function EcosystemSection() {
           <span className="text-[10px] font-black tracking-[0.2em] text-dark uppercase block">
             GLOBAL CUSTOMERS
           </span>
-          <h3 className="text-3xl md:text-5xl font-black tracking-tight text-black  uppercase leading-none">
+          <h3 className="text-3xl md:text-5xl font-black tracking-tight text-black uppercase leading-none">
             Selected Case Studies
           </h3>
-          <p className="text-base text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl leading-relaxed">
-            Explore how Katalyst Street helps leading multi-nationals and
-            digital platforms accelerate AI and secure pipeline performance.
+          <p className="text-base text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl">
+            Explore how Katalyst Street helps leading multi-nationals accelerate
+            AI. Click any card to expand full technical matrix.
           </p>
         </div>
 
-        {/* STAGGERED GRID SYSTEM AREA */}
-        <motion.div
-          variants={staggerContainerVariants}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col gap-8 w-full"
-        >
+        {/* COMPACT GRID VIEW BLOCK */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full items-stretch">
           {caseStudiesData.map((study, idx) => (
             <motion.div
               key={idx}
-              variants={cardItemVariants}
-              className="w-full bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-8 md:p-10 space-y-8 text-left transition-shadow hover:shadow-xl hover:shadow-black/[0.02]"
+              layoutId={`card-container-${study.title}`}
+              onClick={() => setActiveStudy(study)}
+              className="w-full bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-6 flex flex-col justify-between space-y-6 text-left cursor-pointer hover:shadow-lg transition-shadow duration-300"
             >
-              {/* Card Meta Header */}
               <div className="space-y-3">
-                <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase block">
+                <span className="text-[9px] font-bold tracking-widest text-zinc-900 dark:text-zinc-900 uppercase block">
                   {study.tag}
                 </span>
-                <h4 className="text-3xl md:text-5xl font-black tracking-tighter text-black dark:text-white uppercase leading-none">
+                <h4 className="text-2xl font-black tracking-tight text-black uppercase leading-none">
                   {study.title}
                 </h4>
-                <p className="text-xs md:text-sm text-zinc-400 font-medium tracking-wide">
+                <p className="text-[11px] font-medium text-zinc-900 leading-normal">
                   {study.subTitle}
                 </p>
-
-                {/* Horizontal Badges Row */}
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {study.badges.map((badge, bIdx) => (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {study.badges.slice(0, 2).map((badge, bIdx) => (
                     <span
                       key={bIdx}
-                      className="px-3 py-1 rounded-full bg-zinc-200/50 dark:bg-zinc-800/50 text-[10px] font-semibold tracking-wide text-zinc-600 dark:text-zinc-400"
+                      className="px-2 py-0.5 rounded-full bg-zinc-200/60 dark:bg-zinc-500/50 text-[9px] font-semibold text-zinc-300 dark:text-zinc-900"
                     >
                       {badge}
                     </span>
@@ -319,66 +282,151 @@ export default function EcosystemSection() {
                 </div>
               </div>
 
-              {/* Central Abstract Block */}
-              <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 font-light leading-relaxed">
+              <p className="text-xs font-medium text-zinc-900 dark:text-zinc-900 leading-relaxed line-clamp-3">
                 {study.summary}
               </p>
 
-              {/* 4-Quadrant Technical Matrix Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8 pt-6 border-t border-zinc-200/60 dark:border-zinc-800/60">
-                {/* Quadrant 1: Challenge */}
-                <div className="space-y-2">
-                  <h5 className="text-[11px] font-black tracking-widest text-amber-500 uppercase">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-200/60 dark:border-zinc-800/60 text-[11px] mt-auto">
+                <div>
+                  <h5 className="font-black text-black uppercase tracking-wider mb-1">
                     THE CHALLENGE
                   </h5>
-                  <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 font-light leading-relaxed">
+                  <p className="text-zinc-900 line-clamp-2">
                     {study.challenge}
                   </p>
                 </div>
-
-                {/* Quadrant 2: Strategy */}
-                <div className="space-y-2">
-                  <h5 className="text-[11px] font-black tracking-widest text-amber-500 uppercase">
+                <div>
+                  <h5 className="font-black text-black uppercase tracking-wider mb-1">
                     THE STRATEGY
                   </h5>
-                  <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 font-light leading-relaxed">
-                    {study.strategy}
-                  </p>
-                </div>
-
-                {/* Quadrant 3: Solution */}
-                <div className="space-y-2">
-                  <h5 className="text-[11px] font-black tracking-widest text-amber-500 uppercase">
-                    THE SOLUTION
-                  </h5>
-                  <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 font-light leading-relaxed">
-                    {study.solution}
-                  </p>
-                </div>
-
-                {/* Quadrant 4: Results */}
-                <div className="space-y-3">
-                  <h5 className="text-[11px] font-black tracking-widest text-emerald-500 uppercase">
-                    THE RESULTS
-                  </h5>
-                  <ul className="space-y-2">
-                    {study.results.map((result, rIdx) => (
-                      <li
-                        key={rIdx}
-                        className="flex items-start gap-2.5 text-xs md:text-sm font-bold text-black dark:text-white"
-                      >
-                        <span className="text-emerald-500 font-bold select-none">
-                          ✓
-                        </span>
-                        <span>{result}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-zinc-900 line-clamp-2">{study.strategy}</p>
                 </div>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
+
+        {/* ⚡ REACT PORTAL GENERATOR OVERLAY */}
+        {mounted &&
+          typeof window !== "undefined" &&
+          createPortal(
+            <AnimatePresence>
+              {activeStudy && (
+                <div
+                  className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 md:p-6"
+                  style={{ zIndex: 9999999 }}
+                >
+                  {/* Invisible backdrop box that covers ONLY the background space */}
+                  <div
+                    className="absolute inset-0 w-full h-full cursor-pointer z-0"
+                    onClick={() => setActiveStudy(null)}
+                  />
+
+                  {/* Internal Card Canvas Wrapper */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.96, y: 10 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    // ⚡ FIXED: Typed event parameter to prevent explicit implicitly 'any' compiler flags
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                    className="bg-zinc-950 text-white border border-zinc-800 rounded-3xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-6 md:p-8 relative shadow-2xl text-left z-10"
+                  >
+                    {/* Close Trigger Button */}
+                    <button
+                      onClick={() => setActiveStudy(null)}
+                      className="absolute top-5 right-5 w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer z-50 text-sm outline-none"
+                    >
+                      ✕
+                    </button>
+
+                    {/* Header content */}
+                    <div className="space-y-2 pr-8">
+                      <span className="text-[9px] font-bold tracking-widest text-zinc-100 uppercase block">
+                        {activeStudy.tag}
+                      </span>
+                      <h4 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-tight">
+                        {activeStudy.title}
+                      </h4>
+                      <p className="text-xs font-medium text-zinc-100 leading-normal">
+                        {activeStudy.subTitle}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {activeStudy.badges.map((badge, bIdx) => (
+                          <span
+                            key={bIdx}
+                            className="px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800/60 text-[9px] font-semibold text-white"
+                          >
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Body Text Fields */}
+                    <div className="space-y-5 pt-2">
+                      <div className="space-y-1">
+                        <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                          OVERVIEW SUMMARY
+                        </h5>
+                        <p className="text-xs leading-relaxed text-zinc-100 font-normal">
+                          {activeStudy.summary}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
+                        <div className="space-y-1">
+                          <h5 className="text-[10px] font-black text-whitetracking-wider uppercase">
+                            THE CHALLENGE
+                          </h5>
+                          <p className="text-[11px] leading-relaxed text-zinc-100 font-normal">
+                            {activeStudy.challenge}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                            THE STRATEGY
+                          </h5>
+                          <p className="text-[11px] leading-relaxed  text-zinc-100 font-normal">
+                            {activeStudy.strategy}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                          THE SOLUTION
+                        </h5>
+                        <p className="text-[11px] leading-relaxed text-zinc-100 font-normal">
+                          {activeStudy.solution}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2 pt-1">
+                        <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                          KEY RESULTS
+                        </h5>
+                        <ul className="space-y-1.5">
+                          {activeStudy.results.map((res, rIdx) => (
+                            <li
+                              key={rIdx}
+                              className="text-[11px] font-bold text-zinc-300 flex items-start gap-2"
+                            >
+                              <span className="select-none text-zinc-500 pt-0.5">
+                                ✓
+                              </span>
+                              <span className="leading-snug">{res}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>,
+            document.body,
+          )}
       </div>
     </section>
   );

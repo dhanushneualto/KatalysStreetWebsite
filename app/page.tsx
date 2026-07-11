@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Cpu, Cloud, ShieldAlert } from "lucide-react";
@@ -23,19 +23,42 @@ export default function KatalystStreetDemo() {
   // State managers tracking active sub-slide drilldowns
   const [subSlideIndex, setSubSlideIndex] = React.useState(0);
   const [activeJourneyStage, setActiveJourneyStage] = useState(1);
-  {
-    React.useEffect(() => {
-      const interval = setInterval(() => {
-        setActiveTab((currentTab) => {
-          const currentIndex = tabs.indexOf(currentTab);
-          const nextIndex = (currentIndex + 1) % tabs.length;
-          return tabs[nextIndex];
-        });
-      }, 1000);
 
-      return () => clearInterval(interval);
-    }, [activeTab]);
-  }
+  // Dynamic Scroll Tracker State for Phase Switching
+  const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTab((currentTab) => {
+        const currentIndex = tabs.indexOf(currentTab);
+        const nextIndex = (currentIndex + 1) % tabs.length;
+        return tabs[nextIndex];
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [activeTab]);
+
+  // Dynamic Scroll Listener tracking when layout shifts to white bg zone
+  useEffect(() => {
+    const handleScrollLifecycle = () => {
+      if (!containerRef.current) return;
+
+      const metrics = containerRef.current.getBoundingClientRect();
+      const scrolledPercentage =
+        Math.abs(metrics.top) / (metrics.height - window.innerHeight);
+
+      // Matches the exact transition point where bg becomes white (0.06 - 0.09)
+      if (scrolledPercentage > 0.06) {
+        setIsScrolledPastThreshold(true);
+      } else {
+        setIsScrolledPastThreshold(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollLifecycle);
+    return () => window.removeEventListener("scroll", handleScrollLifecycle);
+  }, []);
 
   // 1. Capture absolute scroll metrics across the layout lifespan
   const { scrollYProgress } = useScroll({
@@ -58,10 +81,9 @@ export default function KatalystStreetDemo() {
   );
 
   // 3. Sync background crossfades exactly with the scale-through portal
-  // FIXED: Shifted back to complete early ([0.06, 0.09]), ensuring it snaps to pure bright white instantly
   const bgTransition = useTransform(
     scrollYProgress,
-    [0.01, 0.09],
+    [0.01, 0.05],
     ["#09090b", "#ffffff"],
   );
 
@@ -85,13 +107,16 @@ export default function KatalystStreetDemo() {
   );
 
   // 4. Staggered Lower Layout Entry Mechanics
-  // FIXED: Adjusted the arrival window from [0, 0.12, 0.26] to [0, 0.10, 0.24]
-  // Changed starting position to 600px downward to guarantee it stays clear of the upper content area until called
   const contentYOffset = useTransform(
     scrollYProgress,
     [0, 0.08, 0.24],
     [600, 400, 0],
   );
+
+  // ⚡ DYNAMIC LINK CLASSES: Updates text style based on active viewport transition sequence
+  const linkStyles = isScrolledPastThreshold
+    ? "text-zinc-600 hover:text-black transition-colors"
+    : "text-zinc-300 hover:text-white transition-colors";
 
   return (
     <motion.div
@@ -102,37 +127,47 @@ export default function KatalystStreetDemo() {
       {/* Persistent Navigation Panel */}
       <motion.nav
         style={{ borderColor: navBorder }}
-        className="fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md border-b px-6 py-4 flex justify-between items-center mix-blend-difference"
+        className={`fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-500 ease-in-out ${
+          isScrolledPastThreshold
+            ? "bg-white border-b border-zinc-200 text-black"
+            : "bg-transparent border-b border-zinc-100/80 text-white mix-blend-difference"
+        }`}
       >
         <div className="flex flex-col items-center justify-center gap-1 text-center select-none">
           <Image
             src="/logo.png"
             alt="Katalyst Street Logo"
-            width={110}
-            height={110}
-            className="object-contain filter invert dark:invert-0 brightness-200"
+            width={80}
+            height={80}
+            className={`object-contain transition-all duration-500 ${
+              isScrolledPastThreshold
+                ? "filter invert-0 brightness-100"
+                : "filter invert dark:invert-0 brightness-200"
+            }`}
           />
         </div>
-        <div className="flex gap-8 text-sm font-medium text-zinc-400">
-          <a href="#journey" className="hover:text-white transition-colors">
+
+        {/* ⚡ UPDATED: Links now dynamically swap styling classes for precise blending over black and rendering over white */}
+        <div className="flex gap-8 text-sm font-medium transition-colors duration-500">
+          <a href="#journey" className={linkStyles}>
             Journey
           </a>
-          <a href="#platforms" className="hover:text-white transition-colors">
+          <a href="#platforms" className={linkStyles}>
             Platforms
           </a>
-          <a href="#ecosystem" className="hover:text-white transition-colors">
+          <a href="#ecosystem" className={linkStyles}>
             Ecosystem
           </a>
-          <a href="#industries" className="hover:text-white transition-colors">
+          <a href="#industries" className={linkStyles}>
             Industries
           </a>
-          <a href="#insights" className="hover:text-white transition-colors">
+          <a href="#insights" className={linkStyles}>
             Insights
           </a>
-          <a href="#team" className="hover:text-white transition-colors">
+          <a href="#team" className={linkStyles}>
             Team
           </a>
-          <a href="#contact" className="hover:text-white transition-colors">
+          <a href="#contact" className={linkStyles}>
             Get In Touch
           </a>
         </div>
@@ -164,7 +199,6 @@ export default function KatalystStreetDemo() {
         {/* Core Subheader Panel */}
         <section className="min-h-screen flex flex-col items-center justify-center text-center pt-24">
           <div className="max-w-4xl space-y-8 flex flex-col items-center justify-center">
-            {/* OPTIMIZED: Adjusted cascading entry animations with calculated staggers */}
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -336,12 +370,12 @@ export default function KatalystStreetDemo() {
             </p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch w-full">
-            <div className="bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-8 md:p-12 flex flex-col justify-between">
+            <div className="bg-zinc-50 dark:bg-zinc-300/40 border border-zinc-500/60 dark:border-zinc-800/60 rounded-2xl p-8 md:p-12 flex flex-col justify-between">
               <div>
-                <h3 className="text-xs font-black tracking-widest uppercase text-black mb-8">
+                <h3 className="font-black tracking-widest uppercase text-black mb-8">
                   THE CHALLENGES
                 </h3>
-                <ul className="space-y-4 text-sm md:text-base font-medium text-black">
+                <ul className="space-y-4 text-sm md:text-base font-dark text-black">
                   <li className="flex items-start gap-3">
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-black flex-shrink-0" />
                     <div>Unclear strategic priorities</div>
@@ -374,12 +408,12 @@ export default function KatalystStreetDemo() {
               </div>
             </div>
 
-            <div className="bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-8 pr-10 md:p-12 md:pr-16 flex flex-col justify-between">
+            <div className="bg-zinc-50 dark:bg-zinc-300/40 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-8 pr-10 md:p-12 md:pr-16 flex flex-col justify-between">
               <div>
-                <h3 className="text-xs font-black tracking-widest uppercase text-black mb-8">
+                <h3 className=" font-black tracking-widest uppercase text-black mb-8">
                   THE KATALYST SOLUTION
                 </h3>
-                <ul className="space-y-4 text-sm md:text-base font-bold text-black">
+                <ul className="space-y-4 text-sm md:text-base font-dark text-black">
                   <li className="flex items-start gap-3">
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-black flex-shrink-0" />
                     <div className="md:whitespace-nowrap">
@@ -418,7 +452,7 @@ export default function KatalystStreetDemo() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-black flex-shrink-0" />
-                    <div className="font-semibold text-black">
+                    <div className="font-dark text-black">
                       Change Management & Human Capital Enablement
                     </div>
                   </li>
@@ -433,7 +467,7 @@ export default function KatalystStreetDemo() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-black flex-shrink-0" />
-                    <div className="font-semibold text-black">
+                    <div className="font-dark text-black">
                       Agentic Enterprise Framework
                     </div>
                   </li>
@@ -449,11 +483,87 @@ export default function KatalystStreetDemo() {
         <InsightsSection />
         <TeamSection />
         <ContactSection />
-
         {/* Global Footer Elements */}
-        <footer className="pt-24 border-t border-zinc-900 flex justify-between items-center text-xs text-zinc-600 tracking-wider">
-          <div>© {new Date().getFullYear()} KATALYST STREET INC.</div>
-          <div>CONTACT@KATALYSTSTREET.COM</div>
+        {/* ⚡ FIXED: Changed items-end to items-start so the right side column lines up perfectly with the top layout boundary */}
+        <footer className="pt-24 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-start gap-6 sm:gap-0 text-xs text-zinc-600 tracking-wider">
+          {/* Left Block: Logo, Subtitle, Address, and Copyright */}
+          <div className="flex flex-col items-start gap-3">
+            <div className="flex items-center justify-center select-none opacity-80 hover:opacity-100 transition-opacity">
+              <Image
+                src="/logo.png"
+                alt="Katalyst Street Footer Logo"
+                width={60}
+                height={60}
+                className="object-contain filter invert dark:invert-0 brightness-200"
+              />
+            </div>
+            <div className="font-medium text-zinc-500 max-w-sm">
+              Taming the AI Complexity and building AI Native Enterprises
+            </div>
+
+            {/* Office Address Block */}
+            <div className="text-zinc-600 mt-1">
+              Avalon Boulevard, Georgia, 30009
+            </div>
+
+            <div className="mt-2">
+              © {new Date().getFullYear()} KATALYST STREET INC.
+            </div>
+          </div>
+
+          {/* Right Block: Mail with icon and Social Links */}
+          {/* ⚡ FIXED: Changed items-end to items-start for uniform top alignment */}
+          <div className="flex flex-col items-start sm:items-end gap-4">
+            {/* Email Contact Trigger */}
+            <a
+              href="mailto:CONTACT@KATALYSTSTREET.COM"
+              className="hover:text-black  transition-colors flex items-center gap-2 font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-mail"
+              >
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              CONTACT@KATALYSTSTREET.COM
+            </a>
+
+            {/* LinkedIn Company Redirection */}
+            <a
+              href="https://www.linkedin.com/company/katalyst-street"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-black  transition-colors flex items-center gap-2 font-medium"
+              aria-label="LinkedIn Profile"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-linkedin"
+              >
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect width="4" height="12" x="2" y="9" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+              LINKEDIN
+            </a>
+          </div>
         </footer>
       </motion.div>
     </motion.div>

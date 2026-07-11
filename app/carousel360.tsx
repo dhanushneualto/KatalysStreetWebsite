@@ -47,7 +47,7 @@ export default function CarouselFlat() {
   return (
     <div className="w-full flex flex-col items-center justify-center py-12 bg-transparent select-none overflow-hidden">
       {/* Viewport Control Stage Wrapper — Height dropped to fit shorter layout perfectly */}
-      <div className="relative w-full max-w-6xl flex items-center justify-center px-4 h-[420px]">
+      <div className="relative w-full max-w-6xl flex items-center justify-center px-4 h-[420px] ">
         {/* Left Arrow Button Controls */}
         <button
           onClick={handlePrev}
@@ -122,7 +122,7 @@ export default function CarouselFlat() {
         {/* Right Arrow Button Controls */}
         <button
           onClick={handleNext}
-          className="absolute right-4 z-50 p-3 rounded-full bg-white/90 dark:bg-zinc-900/90 shadow-md text-zinc-800 dark:text-zinc-200 hover:bg-white border border-zinc-200/50 transition-all outline-none"
+          className="absolute right-4 z-50 p-3 rounded-full bg-white/90 dark:bg-zinc-900/90 shadow-md text-zinc-800 dark:text-zinc-200 hover:bg-white border border-zinc-200/50 transition-all outline-none "
         >
           <ChevronRight className="w-5 h-5" />
         </button>

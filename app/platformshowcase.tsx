@@ -37,11 +37,11 @@ export default function PlatformShowcase() {
       terminalLabel: "Outlier",
       terminalLog:
         "[12:37:11] Diagnostics complete. DeltaMax successfully intercepted 1 critical schema anomaly.",
-      accentColor: "border-emerald-500/80 text-emerald-400 bg-emerald-500/5",
-      dotBg: "bg-emerald-500",
-      ctaBg: "bg-emerald-400 hover:bg-emerald-300 text-black",
+      accentColor: "border-zinc-500/80 text-zinc-900 bg-zinc-500/5",
+      dotBg: "bg-zinc-900",
+      ctaBg: "bg-zinc-500 hover:bg-zinc-900 text-white cursor-pointer",
       ctaLearnMoreBorder:
-        "border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700",
+        "bg-zinc-500 hover:bg-zinc-900 text-white cursor-pointer",
       footnote:
         'CTA strategy: "Learn More" routes to standalone product microsites; live diagnostic pipeline metadata requires secure gateway authorization.',
     },
@@ -85,11 +85,11 @@ export default function PlatformShowcase() {
         { label: "Allocation Matrix", active: true },
         { label: "Executive Dashboard", active: false },
       ],
-      accentColor: "border-amber-500/80 text-amber-400 bg-amber-500/5",
-      dotBg: "bg-amber-500",
-      ctaBg: "bg-amber-400 hover:bg-amber-300 text-black",
+      accentColor: "border-zinc-500/80 text-zinc-900 bg-zinc-500/5",
+      dotBg: "bg-zinc-900",
+      ctaBg: "bg-zinc-500 hover:bg-zinc-900 text-white cursor-pointer",
       ctaLearnMoreBorder:
-        "border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700",
+        "bg-zinc-500 hover:bg-zinc-900 text-white cursor-pointer",
       footnote:
         "Product imagery rotates between the Allocation Matrix and the Executive Dashboard so prospects see both the planning and the monitoring side of OptiMax.",
     },
@@ -129,11 +129,11 @@ export default function PlatformShowcase() {
       ],
       barHeights: [50, 35, 70, 60],
       toggles: [] as { label: string; active: boolean }[],
-      accentColor: "border-violet-500/80 text-violet-400 bg-violet-500/5",
-      dotBg: "bg-violet-500",
-      ctaBg: "bg-violet-500 hover:bg-violet-400 text-white",
+      accentColor: "border-zinc-500/80 text-zinc-900 bg-zinc-900/5",
+      dotBg: "bg-zinc-900",
+      ctaBg: "bg-zinc-500 hover:bg-zinc-900 text-white cursor-pointer",
       ctaLearnMoreBorder:
-        "border-violet-500/60 text-violet-300 hover:text-white hover:border-violet-400",
+        "bg-zinc-500 hover:bg-zinc-900 text-white cursor-pointer",
       footnote:
         "Note for review: the source GTM document's feature bullets for PMO-Max appear to be a copy/paste of OptiMax's list. We've substituted governance-platform-appropriate features above, drawn from the PID Architect product visuals — please confirm before this goes live.",
     },
@@ -144,23 +144,24 @@ export default function PlatformShowcase() {
   return (
     <section
       id="platforms"
-      className="w-full max-w-7xl mx-auto px-4 py-24 text-left scroll-mt-24"
+      className="w-full max-w-7xl mx-auto px-4 py-16 text-left scroll-mt-24"
     >
-      <div className="space-y-4 max-w-5xl pt-32 border-t border-zinc-100/10 mt-32">
-        <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-black">
+      <div className="space-y-4 max-w-5xl pt-16 border-t border-zinc-100/10 mt-16">
+        <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-dark">
           PURPOSE-BUILT PLATFORMS
         </span>
-        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black  uppercase leading-[0.95] max-w-6xl">
+        <h2 className="text-3xl md:text-5xl  tracking-tight text-zinc-900 font-black uppercase leading-[1.0] max-w-4xl">
           Three Platforms Powering <br /> Enterprise AI Transformation
         </h2>
-        <p className="text-base md:text-lg text-zinc-900 dark:text-zinc-900  max-w-3xl leading-relaxed pt-2">
+        <p className="text-xs md:text-sm dark:text-zinc-900 font-dark max-w-2xl leading-relaxed pt-1">
           Proprietary platforms purpose-built for enterprise AI — not bolted-on
           features, but purpose-engineered solutions.
         </p>
       </div>
-      <div className="w-full max-w-7xl mx-auto px-4 mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left select-none">
-        {/* LEFT SIDEBAR TRACK (3 Columns Width) */}
-        <div className="lg:col-span-3 flex flex-col gap-3 relative z-20">
+
+      <div className="w-full max-w-7xl mx-auto px-4 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left select-none">
+        {/* LEFT SIDEBAR TRACK */}
+        <div className="lg:col-span-3 flex flex-col gap-2 relative z-20">
           {(Object.keys(platformsData) as PlatformKey[]).map((key) => {
             const item = platformsData[key];
             const isActive = activePlatform === key;
@@ -169,83 +170,72 @@ export default function PlatformShowcase() {
               <button
                 key={key}
                 onClick={() => setActivePlatform(key)}
-                className={`w-full p-5 rounded-2xl border text-left flex flex-col justify-center relative transition-all duration-300 outline-none overflow-hidden min-h-[90px] group
+                className={`w-full p-4 rounded-xl border text-left flex flex-col justify-center relative transition-all duration-200 outline-none overflow-hidden min-h-[76px] group
                   ${
                     isActive
-                      ? "border-zinc-800 bg-zinc-900/10 shadow-lg shadow-black/10"
-                      : "border-zinc-900 bg-zinc-950/40 hover:border-zinc-800"
+                      ? "border-zinc-200 dark:border-zinc-800 bg-zinc-100/40 dark:bg-zinc-900/10 shadow-sm"
+                      : "border-transparent bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900/5"
                   }
                 `}
               >
-                {/* 🧪 THE FLUID BACKDROP PILL: Morphs height & slides smoothly between selections */}
                 {isActive && (
                   <motion.div
                     layoutId="activePlatformBackground"
-                    className="absolute inset-0 bg-gradient-to-r from-zinc-900 to-zinc-900/60 -z-10 border-l-2 border-amber-500"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="absolute inset-0 bg-zinc-100/50 dark:bg-zinc-900/20 border-l-2 border-zinc-500 -z-10"
+                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
                   />
                 )}
 
                 <span
-                  className={`text-[9px] font-black tracking-widest uppercase mb-1 transition-colors ${isActive ? "text-amber-500" : "text-zinc-500 group-hover:text-zinc-400"}`}
+                  className={`text-[8px] font-black tracking-widest uppercase mb-0.5 transition-colors ${isActive ? "text-zinc-900" : "text-zinc-400"}`}
                 >
                   {item.tag}
                 </span>
                 <h3
-                  className={`text-xl font-black tracking-tight uppercase leading-none transition-colors ${isActive ? "text-white" : "text-zinc-400 group-hover:text-zinc-300"}`}
+                  className={`text-base font-black tracking-tight uppercase leading-none transition-colors ${isActive ? "text-zinc-900 " : "text-zinc-400"}`}
                 >
                   {item.name}
                 </h3>
-                <span
-                  className={`text-[10px] font-medium tracking-wide mt-1 transition-colors ${isActive ? "text-zinc-300" : "text-zinc-600"}`}
-                >
-                  {item.name === "DeltaMax"
-                    ? "Data Quality & Trust"
-                    : item.name === "OptiMax"
-                      ? "Revenue Intelligence Engine"
-                      : "Governance Agent Platform"}
-                </span>
               </button>
             );
           })}
         </div>
 
-        {/* RIGHT DISPLAY VIEWPORT (9 Columns Width) */}
-        <div className="lg:col-span-9 bg-zinc-950 border border-zinc-900 rounded-3xl p-8 md:p-12 relative overflow-hidden min-h-[580px] shadow-2xl flex flex-col justify-between">
-          {/* Animated Slide-and-Fade Container Area */}
+        {/* RIGHT DISPLAY VIEWPORT */}
+        <div className="lg:col-span-9 bg-zinc-50/50 dark:bg-zinc-950/10 border border-zinc-200/50 dark:border-zinc-900 rounded-2xl p-6 md:p-8 relative overflow-hidden min-h-[460px] shadow-sm flex flex-col justify-between">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePlatform}
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start w-full h-full"
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start w-full h-full"
             >
               {/* PLATFORM METRICS DESCRIPTION COLUMN */}
-              <div className="xl:col-span-7 space-y-6 flex flex-col justify-between h-full">
-                <div className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight uppercase leading-none">
+              <div className="xl:col-span-7 space-y-4 flex flex-col justify-between h-full">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-xl md:text-2xl font-black text-zinc-900  tracking-tight uppercase leading-none">
                       {currentData.name}
                     </h2>
                     <span
-                      className={`px-2.5 py-1 rounded-full border text-[9px] font-bold tracking-wider uppercase ${currentData.accentColor}`}
+                      className={`px-2 py-0.5 rounded-full border text-[8px] font-bold tracking-wider uppercase ${currentData.accentColor}`}
                     >
                       {currentData.badge}
                     </span>
                   </div>
-                  <p className="text-sm md:text-base text-zinc-400 font-light leading-relaxed">
+                  <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-900 font-dark leading-relaxed">
                     {currentData.desc}
                   </p>
                 </div>
-                {/* Double Split Feature Bullet Deck */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 pt-4 border-t border-zinc-900">
-                  <ul className="space-y-3.5">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-zinc-200/50 dark:border-zinc-800/60">
+                  <ul className="space-y-2">
                     {currentData.bulletsLeft.map((text) => (
                       <li
                         key={text}
-                        className="flex items-start gap-2.5 text-xs font-semibold text-zinc-300"
+                        className="flex items-start gap-2 text-xs font-dark text-zinc-900 dark:text-zinc-900"
                       >
                         <span
                           className={`h-1.5 w-1.5 rounded-full mt-1.5 flex-shrink-0 ${currentData.dotBg}`}
@@ -254,11 +244,11 @@ export default function PlatformShowcase() {
                       </li>
                     ))}
                   </ul>
-                  <ul className="space-y-3.5">
+                  <ul className="space-y-2">
                     {currentData.bulletsRight.map((text) => (
                       <li
                         key={text}
-                        className="flex items-start gap-2.5 text-xs font-semibold text-zinc-300"
+                        className="flex items-start gap-2 text-xs font-dark text-zinc-700 dark:text-zinc-900"
                       >
                         <span
                           className={`h-1.5 w-1.5 rounded-full mt-1.5 flex-shrink-0 ${currentData.dotBg}`}
@@ -269,15 +259,14 @@ export default function PlatformShowcase() {
                   </ul>
                 </div>
 
-                {/* Call-to-Actions Row */}
-                <div className="flex flex-wrap gap-3 pt-8">
+                <div className="flex flex-wrap gap-2 pt-4">
                   <button
-                    className={`px-5 py-2.5 rounded-full border font-bold text-xs bg-transparent transition-all outline-none ${currentData.ctaLearnMoreBorder}`}
+                    className={`px-4 py-2 rounded-xl border font-bold text-xs bg-transparent transition-all outline-none ${currentData.ctaLearnMoreBorder}`}
                   >
                     Learn More
                   </button>
                   <button
-                    className={`px-5 py-2.5 rounded-full font-bold text-xs transition-all outline-none shadow-md ${currentData.ctaBg}`}
+                    className={`px-4 py-2 rounded-xl font-bold text-xs transition-all outline-none shadow-sm ${currentData.ctaBg}`}
                   >
                     Request a Demo
                   </button>
@@ -286,87 +275,57 @@ export default function PlatformShowcase() {
 
               {/* DIAGNOSTIC / METRICS HUD PANEL */}
               {currentData.panelType === "diagnostic" ? (
-                <div className="xl:col-span-5 bg-zinc-900/30 border border-zinc-900/60 rounded-2xl p-5 flex flex-col gap-6 relative w-full overflow-hidden">
-                  {/* Header Window Controller Buttons */}
-                  <div className="flex items-center gap-1.5 border-b border-zinc-900 pb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                    <span className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase ml-2">
+                <div className="xl:col-span-5 bg-zinc-100/50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-900 rounded-xl p-4 flex flex-col gap-4 relative w-full overflow-hidden">
+                  <div className="flex items-center gap-1.5 border-b border-zinc-200 dark:border-zinc-900 pb-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500/80" />
+                    <span className="w-2 h-2 rounded-full bg-amber-500/80" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
+                    <span className="text-[9px] text-zinc-400 font-bold tracking-wider uppercase ml-1">
                       {currentData.terminalTitle}
                     </span>
                   </div>
 
-                  {/* Virtualized Graphic Line Wave placeholder mapping bounds */}
-                  <div className="w-full h-24 flex items-center justify-center relative px-2">
-                    <svg
-                      className="w-full h-full text-zinc-800"
-                      viewBox="0 0 300 100"
-                      fill="none"
-                    >
-                      <path
-                        d="M0,50 Q40,48 80,53 T160,20 T240,50 T300,48"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      />
-                      <motion.circle
-                        key={activePlatform}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        cx="160"
-                        cy="20"
-                        r="4"
-                        className="fill-amber-500 stroke-zinc-950 stroke-2"
-                      />
-                    </svg>
-                  </div>
-
-                  {/* Telemetry Index Rows */}
-                  <div className="space-y-1.5 text-left">
-                    <div className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase">
+                  <div className="space-y-1">
+                    <div className="text-[9px] text-zinc-900 font-dark tracking-wider uppercase">
                       {currentData.terminalIndex}
                     </div>
-                    <div className="flex items-baseline gap-4 pt-1">
-                      <div className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
+                    <div className="flex items-baseline gap-2 pt-0.5">
+                      <div className="text-[10px] text-zinc-900 font-dark uppercase tracking-wider">
                         {currentData.terminalStatus}
                       </div>
-                      <div className="text-lg font-mono font-black text-white">
+                      <div className="text-base  font-dark text-zinc-900 ">
                         {currentData.terminalMetric}
-                      </div>
-                      <div className="text-xs text-amber-500 font-bold uppercase tracking-wider ml-auto">
-                        {currentData.terminalLabel}
                       </div>
                     </div>
                   </div>
 
-                  {/* Console Output Log Banner Box */}
-                  <div className="w-full bg-zinc-950 border border-zinc-900 rounded-xl p-3.5 font-mono text-[10px] text-zinc-400 leading-relaxed text-left">
+                  <div className="w-full bg-zinc-950 border border-zinc-900 rounded-lg p-2.5 font-mono text-[9px] text-zinc-400 leading-normal">
                     {currentData.terminalLog}
                   </div>
                 </div>
               ) : (
-                <div className="xl:col-span-5 bg-zinc-900/30 border border-zinc-900/60 rounded-2xl p-5 flex flex-col gap-6 relative w-full overflow-hidden">
-                  <div className="flex items-center gap-1.5 border-b border-zinc-900 pb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                    <span className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase ml-2">
+                <div className="xl:col-span-5 bg-zinc-100/50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-900 rounded-xl p-4 flex flex-col gap-4 relative w-full overflow-hidden">
+                  <div className="flex items-center gap-1.5 border-b border-zinc-200 dark:border-zinc-900 pb-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500/80" />
+                    <span className="w-2 h-2 rounded-full bg-amber-500/80" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
+                    <span className="text-[9px] text-zinc-900 font-bold tracking-wider uppercase ml-1">
                       {currentData.matrixTitle}
                     </span>
                   </div>
 
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3">
                     {currentData.metrics.map((m) => (
-                      <div key={m.label} className="space-y-1.5">
+                      <div key={m.label} className="space-y-1">
                         <div className="flex items-baseline justify-between gap-4">
-                          <span className="text-xs text-zinc-300 font-bold">
+                          <span className="text-[11px] text-zinc-600 dark:text-zinc-900 font-bold">
                             {m.label}
                           </span>
-                          <span className="text-xs font-mono font-black text-white whitespace-nowrap">
+                          <span className="text-xs font-mono font-bold text-zinc-900 dark:text-white">
                             {m.value}
                           </span>
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                        <div className="w-full h-1 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
                           <div
                             className={`h-full rounded-full ${currentData.dotBg}`}
                             style={{ width: `${m.barPercent}%` }}
@@ -376,178 +335,159 @@ export default function PlatformShowcase() {
                     ))}
                   </div>
 
-                  <div className="w-full h-20 flex items-end justify-between gap-2 px-1">
+                  <div className="w-full h-16 flex items-end justify-between gap-1.5 px-0.5">
                     {currentData.barHeights.map((h, i) => (
                       <div
                         key={i}
-                        className={`flex-1 rounded-t-md ${currentData.dotBg} opacity-80`}
+                        className={`flex-1 rounded-t-sm ${currentData.dotBg} opacity-80`}
                         style={{ height: `${h}%` }}
                       />
                     ))}
                   </div>
-
-                  {currentData.toggles.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {currentData.toggles.map((t) => (
-                        <span
-                          key={t.label}
-                          className={`px-3 py-1.5 rounded-full border text-[10px] font-bold tracking-wide ${
-                            t.active
-                              ? `${currentData.dotBg} text-black border-transparent`
-                              : "border-zinc-800 text-zinc-400"
-                          }`}
-                        >
-                          {t.label}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )}
             </motion.div>
           </AnimatePresence>
 
-          {/* Small Ambient Subtext Notes Block */}
-          <div className="text-[10px] text-zinc-600 font-medium tracking-wide text-left pt-6 border-t border-zinc-900/40 mt-6">
+          <div className="text-[9px] text-zinc-400 dark:text-zinc-500 font-medium tracking-wide text-left pt-4 border-t border-zinc-200/30 dark:border-zinc-900/40 mt-4">
             {currentData.footnote}
           </div>
         </div>
       </div>
-      {/* VERTICAL MATRIX STACK */}
 
-      <div className="space-y-4 mb-16 max-w-5xl mt-24 pt-24 border-t border-zinc-200/60 dark:border-zinc-800/60">
-        <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-black">
+      {/* HEADER SECTION FOR DYNAMIC TRACK OVERVIEW */}
+      <div className="space-y-3 mb-10 max-w-4xl mt-24 pt-16 border-t border-zinc-200/50 dark:border-zinc-900">
+        <span className="text-[10px] font-black tracking-[0.3em] uppercase text-zinc-900">
           INTEGRATED ARCHITECTURE
         </span>
-        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black  uppercase leading-[0.95] max-w-5xl">
-          How Everything <br /> Fits Together
+        <h2 className="text-2xl md:text-3xl font-black tracking-tight text-zinc-900  uppercase leading-[1.0] max-w-3xl">
+          How Everything Fits Together
         </h2>
-        <p className="text-base md:text-lg text-zinc-500 dark:text-zinc-900 font-dark max-w-3xl leading-relaxed pt-2">
-          Strategy without execution fails. Execution without trust fails. Trust
-          without optimization delivers no value. Katalyst Street connects all
-          layers.
+        <p className="text-xs md:text-sm text-zinc-900 font-dark dark:text-zinc-900 max-w-xl leading-relaxed">
+          Strategy without execution fails. Katalyst Street connects all
+          foundational layers seamlessly.
         </p>
       </div>
 
-      {/* 1. THE VERTICAL MATRIX STACK RUNNING DOWN IN THE CENTER */}
-      <div className="relative flex flex-col w-full max-w-4xl mx-auto mb-24">
-        {/* LAYER 01: Outcomes */}
+      {/* 🚀 EXPANDED ARROW FLOW PIPELINE MATRIX CONTAINER */}
+      <div className="relative flex flex-col w-full max-w-2xl mx-auto">
+        {/* STAGE 1: Outcomes */}
         <div className="grid grid-cols-12 gap-4 items-center w-full">
-          <div className="col-span-3 text-right pr-6">
-            <span className="text-[10px] font-black tracking-[0.2em] text-zinc-900 uppercase">
+          <div className="col-span-3 text-right pr-4">
+            <span className="text-[10px] font-black tracking-[0.15em] text-zinc-900 uppercase">
               OUTCOMES
             </span>
           </div>
-          <div className="col-span-9 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-6 flex justify-between items-center">
-            <h3 className="text-lg font-black text-black  tracking-tight">
+          <div className="col-span-9 bg-zinc-100/60 dark:bg-zinc-900/20 border border-zinc-200/50 dark:border-zinc-900 rounded-xl px-6 py-4 flex justify-between items-center shadow-sm">
+            <h3 className="text-base font-black text-zinc-900 tracking-tight">
               Business Outcomes
             </h3>
-            <span className="px-3 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 text-[10px] font-bold tracking-wider text-zinc-900 dark:text-zinc-900 uppercase">
+            <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-[10px] font-bold tracking-wider text-zinc-500 dark:text-zinc-900 uppercase">
               Revenue • Cost • Growth
             </span>
           </div>
         </div>
 
-        {/* CENTERED DOWNWARD ARROW 1 */}
+        {/* COMPACT GAP ARROW 1 */}
         <div className="grid grid-cols-12 gap-4 w-full">
           <div className="col-span-3"></div>
-          <div className="col-span-9 flex justify-center py-4">
-            <div className="text-zinc-300 dark:text-zinc-700 text-lg font-light leading-none select-none">
+          <div className="col-span-9 flex justify-center py-2">
+            <div className="text-zinc-300 dark:text-zinc-700 text-sm font-light select-none">
               ↓
             </div>
           </div>
         </div>
 
-        {/* LAYER 02: Scale */}
+        {/* STAGE 2: Scale */}
         <div className="grid grid-cols-12 gap-4 items-center w-full">
-          <div className="col-span-3 text-right pr-6">
-            <span className="text-[10px] font-black tracking-[0.2em] text-zinc-900 uppercase">
+          <div className="col-span-3 text-right pr-4">
+            <span className="text-[10px] font-black tracking-[0.15em] text-zinc-900 uppercase">
               SCALE
             </span>
           </div>
-          <div className="col-span-9 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-6 flex justify-between items-center">
-            <h3 className="text-lg font-black text-black  tracking-tight">
+          <div className="col-span-9 bg-zinc-100/60 dark:bg-zinc-900/20 border border-zinc-200/50 dark:border-zinc-900 rounded-xl px-6 py-4 flex justify-between items-center shadow-sm">
+            <h3 className="text-base font-black text-zinc-900  tracking-tight">
               Optimization Intelligence
             </h3>
-            <span className="px-3 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 text-[10px] font-bold tracking-wider text-zinc-600 dark:text-zinc-900 uppercase">
+            <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-[10px] font-bold tracking-wider text-zinc-500 dark:text-zinc-900 uppercase">
               OptiMax
             </span>
           </div>
         </div>
 
-        {/* CENTERED DOWNWARD ARROW 2 */}
+        {/* COMPACT GAP ARROW 2 */}
         <div className="grid grid-cols-12 gap-4 w-full">
           <div className="col-span-3"></div>
-          <div className="col-span-9 flex justify-center py-4">
-            <div className="text-zinc-300 dark:text-zinc-700 text-lg font-light leading-none select-none">
+          <div className="col-span-9 flex justify-center py-2">
+            <div className="text-zinc-300 dark:text-zinc-700 text-sm font-light select-none">
               ↓
             </div>
           </div>
         </div>
 
-        {/* LAYER 03: Govern */}
+        {/* STAGE 3: Govern */}
         <div className="grid grid-cols-12 gap-4 items-center w-full">
-          <div className="col-span-3 text-right pr-6">
-            <span className="text-[10px] font-black tracking-[0.2em] text-zinc-900 uppercase">
+          <div className="col-span-3 text-right pr-4">
+            <span className="text-[10px] font-black tracking-[0.15em] text-zinc-900 uppercase">
               GOVERN
             </span>
           </div>
-          <div className="col-span-9 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-6 flex justify-between items-center">
-            <h3 className="text-lg font-black text-black tracking-tight">
+          <div className="col-span-9 bg-zinc-100/60 dark:bg-zinc-900/20 border border-zinc-200/50 dark:border-zinc-900 rounded-xl px-6 py-4 flex justify-between items-center shadow-sm">
+            <h3 className="text-base font-black text-zinc-900  tracking-tight">
               AI Governance & Program Layer
             </h3>
-            <span className="px-3 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 text-[10px] font-bold tracking-wider text-zinc-600 dark:text-zinc-900 uppercase">
+            <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-[10px] font-bold tracking-wider text-zinc-500 dark:text-zinc-900 uppercase">
               PMO-Max
             </span>
           </div>
         </div>
 
-        {/* CENTERED DOWNWARD ARROW 4 */}
+        {/* COMPACT GAP ARROW 3 */}
         <div className="grid grid-cols-12 gap-4 w-full">
           <div className="col-span-3"></div>
-          <div className="col-span-9 flex justify-center py-4">
-            <div className="text-zinc-300 dark:text-zinc-700 text-lg font-light leading-none select-none">
+          <div className="col-span-9 flex justify-center py-2">
+            <div className="text-zinc-300 dark:text-zinc-700 text-sm font-light select-none">
               ↓
             </div>
           </div>
         </div>
 
-        {/* LAYER 04: Trust */}
+        {/* STAGE 4: Trust */}
         <div className="grid grid-cols-12 gap-4 items-center w-full">
-          <div className="col-span-3 text-right pr-6">
-            <span className="text-[10px] font-black tracking-[0.2em] text-zinc-900 uppercase">
+          <div className="col-span-3 text-right pr-4">
+            <span className="text-[10px] font-black tracking-[0.15em] text-zinc-900 uppercase">
               TRUST
             </span>
           </div>
-          <div className="col-span-9 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-6 flex justify-between items-center">
-            <h3 className="text-lg font-black text-black tracking-tight">
+          <div className="col-span-9 bg-zinc-100/60 dark:bg-zinc-900/20 border border-zinc-200/50 dark:border-zinc-900 rounded-xl px-6 py-4 flex justify-between items-center shadow-sm">
+            <h3 className="text-base font-black text-zinc-900  tracking-tight">
               Trusted Data Layer
             </h3>
-            <span className="px-3 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 text-[10px] font-bold tracking-wider text-zinc-600 dark:text-zinc-900 uppercase">
+            <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-[10px] font-bold tracking-wider text-zinc-500 dark:text-zinc-900 uppercase">
               DeltaMax
             </span>
           </div>
         </div>
 
-        {/* CENTERED DOWNWARD ARROW 5 */}
+        {/* COMPACT GAP ARROW 4 */}
         <div className="grid grid-cols-12 gap-4 w-full">
           <div className="col-span-3"></div>
-          <div className="col-span-9 flex justify-center py-4">
-            <div className="text-zinc-300 dark:text-zinc-700 text-lg font-light leading-none select-none">
+          <div className="col-span-9 flex justify-center py-2">
+            <div className="text-zinc-300 dark:text-zinc-700 text-sm font-light select-none">
               ↓
             </div>
           </div>
         </div>
 
-        {/* LAYER 05: Foundation */}
+        {/* STAGE 5: Foundation */}
         <div className="grid grid-cols-12 gap-4 items-center w-full">
-          <div className="col-span-3 text-right pr-6">
-            <span className="text-[10px] font-black tracking-[0.2em] text-zinc-900 uppercase">
+          <div className="col-span-3 text-right pr-4">
+            <span className="text-[10px] font-black tracking-[0.15em] text-zinc-900 uppercase">
               FOUNDATION
             </span>
           </div>
-          <div className="col-span-9 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-6 text-left">
-            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-900 tracking-wide leading-relaxed">
+          <div className="col-span-9 bg-zinc-100/60 dark:bg-zinc-900/20 border border-zinc-200/50 dark:border-zinc-900 rounded-xl px-6 py-4 text-left shadow-sm">
+            <p className="text-xs md:text-sm font-bold text-zinc-600 dark:text-zinc-900 tracking-wide leading-relaxed">
               Enterprise Data • Cloud & AI Infrastructure • AWS • Azure • GCP •
               Snowflake • Databricks
             </p>

@@ -165,7 +165,6 @@ export default function JourneySection() {
           structural layer.
         </p>
       </div>
-
       {/* DASHBOARD CONTAINER GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start w-full">
         {/* LEFT NAV PANEL: Sticky Stepper Controls (4 Columns) */}
@@ -189,14 +188,14 @@ export default function JourneySection() {
                 {isActive && (
                   <motion.div
                     layoutId="journeyNavIndicator"
-                    className="absolute inset-0 bg-zinc-100/60 dark:bg-zinc-900/30 border-l-2 border-amber-500 -z-10"
+                    className="absolute inset-0 bg-zinc-100/60 dark:bg-zinc-900/30 border-l-2 border-zinc-500 -z-10"
                     transition={{ type: "spring", stiffness: 380, damping: 35 }}
                   />
                 )}
 
                 <span
                   className={`text-[9px] font-black tracking-widest uppercase mb-1 transition-colors duration-300
-                  ${isActive ? "text-amber-500" : "text-zinc-400 dark:text-zinc-600 group-hover:text-zinc-500"}`}
+                  ${isActive ? "text-zinc-900" : "text-zinc-400 dark:text-zinc-600 group-hover:text-zinc-500"}`}
                 >
                   {stage.stageNum}
                 </span>
@@ -225,17 +224,17 @@ export default function JourneySection() {
               {/* Top Summary Info Segment */}
               <div className="space-y-4 max-w-3xl mb-10">
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-[10px] font-black tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+                  <span className="text-[10px] font-black tracking-widest text-zinc-500 dark:text-zinc-900 uppercase">
                     {currentStageData.stageNum}
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/5 text-[9px] font-bold tracking-wider text-amber-600 dark:text-amber-500 uppercase">
+                  <span className="px-2.5 py-0.5 rounded-full border border-dark-500/30 bg-dark-500/5 text-[9px] font-bold tracking-wider text-dark-600 dark:text-dark-500 uppercase">
                     {currentStageData.buttonLabel}
                   </span>
                 </div>
-                <h4 className="text-2xl md:text-3xl font-black text-black dark:text-white tracking-tight uppercase leading-none">
+                <h4 className="text-2xl md:text-3xl font-black text-zinc-900  tracking-tight uppercase leading-none">
                   {currentStageData.title} Paradigm
                 </h4>
-                <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-light leading-relaxed">
+                <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-900 font-dark leading-relaxed">
                   {currentStageData.shortDesc}
                 </p>
               </div>
@@ -244,17 +243,17 @@ export default function JourneySection() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-zinc-200/60 dark:border-zinc-800/60 items-start w-full">
                 {/* Column Left: Focus Fields */}
                 <div className="space-y-4">
-                  <h5 className="text-[11px] font-black tracking-widest text-amber-500 uppercase flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-amber-500" />
+                  <h5 className="text-[11px] font-black tracking-widest text-dark uppercase flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-900" />
                     {currentStageData.strategyTitle}
                   </h5>
                   <ul className="space-y-3">
                     {currentStageData.strategyItems.map((item, idx) => (
                       <li
                         key={idx}
-                        className="text-xs md:text-sm font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-2"
+                        className="text-xs md:text-sm font-semibold text-zinc-700 dark:text-zinc-900 flex items-center gap-2"
                       >
-                        <span className="text-amber-500/70 font-mono text-xs select-none">
+                        <span className="text-black font-mono text-xs select-none">
                           →
                         </span>
                         <span>{item}</span>
@@ -265,15 +264,15 @@ export default function JourneySection() {
 
                 {/* Column Right: Deliverable Metrics */}
                 <div className="space-y-4">
-                  <h5 className="text-[11px] font-black tracking-widest text-zinc-400 dark:text-zinc-500 uppercase flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-600" />
+                  <h5 className="text-[11px] font-black tracking-widest text-zinc-400 dark:text-zinc-900 uppercase flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-900" />
                     {currentStageData.deliverablesTitle}
                   </h5>
                   <ul className="space-y-3">
                     {currentStageData.deliverablesItems.map((item, idx) => (
                       <li
                         key={idx}
-                        className="text-xs md:text-sm font-light text-zinc-500 dark:text-zinc-400 flex items-start gap-2 leading-tight"
+                        className="text-xs md:text-sm font-semibold text-zinc-700 dark:text-zinc-900 flex items-center gap-2"
                       >
                         <span className="text-zinc-400 dark:text-zinc-600 font-mono text-xs select-none pt-0.5">
                           ↳
@@ -300,7 +299,7 @@ export default function JourneySection() {
               {stages.map((_, i) => (
                 <span
                   key={i}
-                  className={`h-1 rounded-full transition-all duration-300 ${i === activeStage ? "w-4 bg-amber-500" : "w-1 bg-zinc-300 dark:bg-zinc-800"}`}
+                  className={`h-1 rounded-full transition-all duration-300 ${i === activeStage ? "w-4 bg-zinc-500" : "w-1 bg-zinc-300 dark:bg-zinc-800"}`}
                 />
               ))}
             </div>
@@ -315,20 +314,6 @@ export default function JourneySection() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Separator Section Bottom Anchor */}
-      <div className="space-y-4 max-w-5xl pt-32 border-t border-zinc-200/40 dark:border-zinc-900 mt-32 w-full">
-        <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-amber-500">
-          PURPOSE-BUILT PLATFORMS
-        </span>
-        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black dark:text-white uppercase leading-[0.95] max-w-6xl">
-          Three Platforms Powering <br /> Enterprise AI Transformation
-        </h2>
-        <p className="text-base md:text-lg font-light max-w-3xl leading-relaxed pt-2 text-zinc-500 dark:text-zinc-400">
-          Proprietary platforms purpose-built for enterprise AI — not bolted-on
-          features, but purpose-engineered solutions.
-        </p>
       </div>
     </section>
   );
