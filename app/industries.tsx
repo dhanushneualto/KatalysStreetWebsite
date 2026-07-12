@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 
 interface IndustryCard {
@@ -146,7 +146,8 @@ export default function IndustriesSection() {
     },
   ];
 
-  const containerVariants = {
+  // 🛠️ ADDED EXPLICIT TYPE CASTING TO PREVENT VARIANT INFERENCE ERRORS
+  const containerVariants: Variants = {
     initial: { opacity: 0 },
     animate: {
       opacity: 1,
@@ -154,7 +155,7 @@ export default function IndustriesSection() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     initial: { opacity: 0, y: 30 },
     animate: {
       opacity: 1,
@@ -162,8 +163,9 @@ export default function IndustriesSection() {
       transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
     },
   };
-  const listContainerVariants = {
-    initial: {},
+
+  const listContainerVariants: Variants = {
+    initial: { opacity: 1 },
     animate: {
       transition: {
         staggerChildren: 0.08,
@@ -171,7 +173,8 @@ export default function IndustriesSection() {
       },
     },
   };
-  const rowLineVariants = {
+
+  const rowLineVariants: Variants = {
     initial: { opacity: 0 },
     animate: {
       opacity: 1,
@@ -189,9 +192,9 @@ export default function IndustriesSection() {
       {/* Header Typography Group */}
       <div className="space-y-4 mb-16 max-w-5xl">
         <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-black">
-          INDUSTRY SOLUTIONS
+          INDUSTRIONS SOLUTIONS
         </span>
-        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black  uppercase leading-[0.95] max-w-6xl">
+        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black uppercase leading-[0.95] max-w-6xl">
           Built for Industry-Specific <br /> Transformation
         </h2>
         <p className="text-base md:text-lg text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl leading-relaxed pt-2">
@@ -200,7 +203,7 @@ export default function IndustriesSection() {
         </p>
       </div>
 
-      {/* 🚀 FIXED ACCORDION DECK: Images serve as full-card design backdrops */}
+      {/* FIXED ACCORDION DECK */}
       <div className="flex flex-col lg:flex-row gap-4 w-full h-auto lg:h-[460px] items-stretch overflow-visible">
         {industriesData.map((industry, idx) => {
           const isExpanded = expandedIdx === idx;
@@ -217,7 +220,7 @@ export default function IndustriesSection() {
               }}
               className="cursor-pointer rounded-3xl p-8 border text-left flex flex-col justify-between relative overflow-hidden flex-shrink-0 w-full lg:w-auto border-zinc-200/60 dark:border-zinc-800/40 group shadow-sm bg-zinc-900"
             >
-              {/* 🛠️ BACKDROP IMAGE COMPONENT LAYERS */}
+              {/* BACKDROP IMAGE LAYER */}
               <div className="absolute inset-0 z-0 select-none pointer-events-none transition-transform duration-500 group-hover:scale-105">
                 <Image
                   src={industry.imgSrc}
@@ -226,7 +229,6 @@ export default function IndustriesSection() {
                   priority
                   className="object-cover"
                 />
-                {/* Clean dark scrim overlay protector to ensure your text content pops perfectly */}
                 <div
                   className={`absolute inset-0 bg-black transition-opacity duration-300 ${isExpanded ? "opacity-75" : "opacity-45 dark:opacity-60"}`}
                 />
@@ -295,17 +297,17 @@ export default function IndustriesSection() {
         })}
       </div>
 
-      {/* THE KATALYST DIFFERENCE MATRIX PANEL */}
+      {/* DIFFERENCE MATRIX PANEL */}
       <div className="mt-32 pt-16 border-t border-zinc-100/10 space-y-12 w-full">
         <div className="max-w-5xl space-y-4">
           <span className="text-[10px] font-black tracking-[0.2em] text-black uppercase block">
             THE KATALYST DIFFERENCE
           </span>
-          <h3 className="text-3xl md:text-5xl font-black tracking-tight text-black  uppercase leading-[0.95] max-w-5xl">
+          <h3 className="text-3xl md:text-5xl font-black tracking-tight text-black uppercase leading-[0.95] max-w-5xl">
             Most Firms Do One Thing Well. <br />
             We Bring Everything Together.
           </h3>
-          <p className="text-base text-zinc-500 dark:text-zinc-900  max-w-2xl leading-relaxed pt-1">
+          <p className="text-base text-zinc-500 dark:text-zinc-900 max-w-2xl leading-relaxed pt-1">
             Traditional consulting, system integrators, and software vendors
             each solve a piece. Katalyst Street is the only firm built to
             deliver the full transformation.
@@ -352,7 +354,7 @@ export default function IndustriesSection() {
                       variants={rowLineVariants}
                       className={`flex items-center gap-3 text-sm pb-3 border-b border-zinc-200/40 dark:border-zinc-800/40 last:border-none last:pb-0 ${
                         hasFeature
-                          ? "text-black  font-bold"
+                          ? "text-black font-bold"
                           : "text-zinc-400 dark:text-zinc-600 font-light"
                       }`}
                     >

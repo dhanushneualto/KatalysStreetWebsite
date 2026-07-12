@@ -277,10 +277,7 @@ export default function PlatformShowcase() {
               {currentData.panelType === "diagnostic" ? (
                 <div className="xl:col-span-5 bg-zinc-100/50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-900 rounded-xl p-4 flex flex-col gap-4 relative w-full overflow-hidden">
                   <div className="flex items-center gap-1.5 border-b border-zinc-200 dark:border-zinc-900 pb-2">
-                    <span className="w-2 h-2 rounded-full bg-red-500/80" />
-                    <span className="w-2 h-2 rounded-full bg-amber-500/80" />
-                    <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
-                    <span className="text-[9px] text-zinc-400 font-bold tracking-wider uppercase ml-1">
+                    <span className="text-[9px] text-zinc-900 font-bold tracking-wider uppercase ml-1">
                       {currentData.terminalTitle}
                     </span>
                   </div>
@@ -306,9 +303,6 @@ export default function PlatformShowcase() {
               ) : (
                 <div className="xl:col-span-5 bg-zinc-100/50 dark:bg-zinc-900/30 border border-zinc-200/60 dark:border-zinc-900 rounded-xl p-4 flex flex-col gap-4 relative w-full overflow-hidden">
                   <div className="flex items-center gap-1.5 border-b border-zinc-200 dark:border-zinc-900 pb-2">
-                    <span className="w-2 h-2 rounded-full bg-red-500/80" />
-                    <span className="w-2 h-2 rounded-full bg-amber-500/80" />
-                    <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
                     <span className="text-[9px] text-zinc-900 font-bold tracking-wider uppercase ml-1">
                       {currentData.matrixTitle}
                     </span>
