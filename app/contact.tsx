@@ -8,36 +8,45 @@ export default function ContactSection() {
     fullName: "",
     businessEmail: "",
     organization: "",
+    position: "", // ⚡ Clean separated state mapping tracker key
     interest: "StrategyMax",
     message: "",
   });
 
-  // ⚡ Added state tracker to capture the submission event status
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [result, setResult] = useState(""); // ⚡ Added Web3Forms result text handler state
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Routed to advisory team interface parameter tracking
-    console.log("Submitting Advisory Intake Data Package:", formData);
-    // ⚡ 2. Construct the Email Form Parameter Matrix
-    const emailTarget = "dhanu282004@gmail.com";
-    const subject = encodeURIComponent(
-      `AI Advisory Intake - ${formData.organization}`,
-    );
-    const body = encodeURIComponent(
-      `New AI Strategy Request Received:\n\n` +
-        `• Full Name: ${formData.fullName}\n` +
-        `• Business Email: ${formData.businessEmail}\n` +
-        `• Organization: ${formData.organization}\n` +
-        `• Primary Area of Interest: ${formData.interest}\n\n` +
-        `Challenge Description:\n${formData.message}`,
-    );
+    setResult("Sending...");
 
-    // ⚡ 3. Native Trigger: Opens user's mail application pre-filled with the variables
-    window.location.href = `mailto:${emailTarget}?subject=${subject}&body=${body}`;
+    // Constructing standard Web3Forms key parameters mapping layout payload
+    const formPayload = new FormData();
+    formPayload.append("access_key", "ed2f908a-1c7a-42c7-8f18-6515ea70abb9");
+    formPayload.append("name", formData.fullName);
+    formPayload.append("email", formData.businessEmail);
+    formPayload.append("organization", formData.organization);
+    formPayload.append("position", formData.position);
+    formPayload.append("interest", formData.interest);
+    formPayload.append("message", formData.message);
 
-    // ⚡ Flips container interface to success state window view
-    setIsSubmitted(true);
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formPayload,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResult("Success!");
+        setIsSubmitted(true);
+      } else {
+        setResult("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      setResult("Network error. Please try again later.");
+    }
   };
 
   const actionCards = [
@@ -65,7 +74,7 @@ export default function ContactSection() {
         <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-dark">
           START YOUR TRANSFORMATION
         </span>
-        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black  uppercase leading-[0.95]">
+        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black uppercase leading-[0.95]">
           Your AI Transformation <br /> Starts Here
         </h2>
         <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl mx-auto leading-relaxed pt-2">
@@ -82,10 +91,10 @@ export default function ContactSection() {
             key={idx}
             className="bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-6 md:p-8 flex flex-col justify-start text-left cursor-pointer group hover:border-amber-500/40 transition-all duration-300"
           >
-            <h4 className="text-lg font-black text-black tracking-tight leading-snug mb-3  transition-colors">
+            <h4 className="text-lg font-black text-black tracking-tight leading-snug mb-3 transition-colors">
               {card.title}
             </h4>
-            <p className="text-xs text-zinc-500 dark:text-zinc-900 font-dark  leading-relaxed">
+            <p className="text-xs text-zinc-500 dark:text-zinc-900 font-dark leading-relaxed">
               {card.desc}
             </p>
           </div>
@@ -98,7 +107,7 @@ export default function ContactSection() {
           <span className="text-[10px] font-black tracking-[0.2em] text-black uppercase block">
             ADVISORY INTAKE
           </span>
-          <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black  uppercase leading-none">
+          <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black uppercase leading-none">
             Align Your AI Strategy
           </h3>
           <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-900 font-dark max-w-3xl leading-relaxed pt-1">
@@ -121,6 +130,7 @@ export default function ContactSection() {
                 </label>
                 <input
                   type="text"
+                  name="name"
                   required
                   placeholder="e.g. John Doe"
                   value={formData.fullName}
@@ -138,6 +148,7 @@ export default function ContactSection() {
                 </label>
                 <input
                   type="email"
+                  name="email"
                   required
                   placeholder="e.g. john@company.com"
                   value={formData.businessEmail}
@@ -147,17 +158,20 @@ export default function ContactSection() {
                   className="w-full bg-white dark:bg-zinc-500 border border-zinc-200 dark:border-zinc-800/80 rounded-xl px-4 py-3 text-sm text-black dark:text-white placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
                 />
               </div>
+
+              {/* Position */}
               <div className="space-y-2">
                 <label className="text-[11px] font-bold tracking-wide text-zinc-600 dark:text-zinc-900 uppercase">
                   Position*
                 </label>
                 <input
                   type="text"
+                  name="position"
                   required
                   placeholder="e.g. Solutions Architect"
-                  value={formData.message}
+                  value={formData.position}
                   onChange={(e) =>
-                    setFormData({ ...formData, message: e.target.value })
+                    setFormData({ ...formData, position: e.target.value })
                   }
                   className="w-full bg-white dark:bg-zinc-500 border border-zinc-200 dark:border-zinc-800/80 rounded-xl px-4 py-3 text-sm text-black dark:text-white placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
                 />
@@ -170,6 +184,7 @@ export default function ContactSection() {
                 </label>
                 <input
                   type="text"
+                  name="organization"
                   required
                   placeholder="e.g. Oben Holding"
                   value={formData.organization}
@@ -186,6 +201,7 @@ export default function ContactSection() {
                   Primary Area of Interest*
                 </label>
                 <select
+                  name="interest"
                   value={formData.interest}
                   onChange={(e) =>
                     setFormData({ ...formData, interest: e.target.value })
@@ -259,6 +275,7 @@ export default function ContactSection() {
                 How can our team assist you? *
               </label>
               <textarea
+                name="message"
                 required
                 rows={4}
                 placeholder="Describe your current data, AI, or operational challenge..."
@@ -283,6 +300,13 @@ export default function ContactSection() {
                 follow-up.
               </span>
             </div>
+
+            {/* Inline Transmission Status Message Display Box */}
+            {result && (
+              <p className="mt-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                {result}
+              </p>
+            )}
           </form>
         ) : (
           /* ⚡ THANK YOU NOTE CONTAINER: Smoothly displays upon success */
