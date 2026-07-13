@@ -74,7 +74,7 @@ export default function EcosystemSection() {
     {
       name: "Neuroagent.AI",
       role: "AI Engineering",
-      logoSrc: "/logos/neuroagent.png",
+      logoSrc: "/neuroagent.png",
     },
   ];
 
