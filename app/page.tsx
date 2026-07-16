@@ -130,19 +130,19 @@ export default function KatalystStreetDemo() {
         className={`fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-500 ease-in-out ${
           isScrolledPastThreshold
             ? "bg-white border-b border-zinc-200 text-black"
-            : "bg-transparent border-b border-zinc-100/80 text-white mix-blend-difference"
+            : "bg-transparent border-b border-zinc-100/80 text-white"
         }`}
       >
         <div className="flex flex-col items-center justify-center gap-1 text-center select-none">
           <Image
-            src="/logo.png"
+            src="/logonew1.png"
             alt="Katalyst Street Logo"
-            width={80}
-            height={80}
+            width={120}
+            height={120}
             className={`object-contain transition-all duration-500 ${
               isScrolledPastThreshold
-                ? "filter invert-0 brightness-100"
-                : "filter invert dark:invert-0 brightness-200"
+                ? "filter brightness-0 grayscale contrast-200"
+                : "filter brightness-0 invert"
             }`}
           />
         </div>
@@ -172,7 +172,6 @@ export default function KatalystStreetDemo() {
           </a>
         </div>
       </motion.nav>
-
       {/* STICKY VIEWPORT PORTAL (Locks to screen while scaling) */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pointer-events-none">
         <motion.div
@@ -189,8 +188,25 @@ export default function KatalystStreetDemo() {
             The Enterprise AI Transformation Company
           </p>
         </motion.div>
-      </div>
+        <div className="absolute right-6 bottom-6 w-44 h-44 md:w-56 md:h-56 select-none pointer-events-none z-10">
+          <div className="relative w-full h-full">
+            <Image
+              src="/beast.png"
+              alt="Tame The Beast AI Emblem"
+              fill
+              sizes="(max-width: 768px) 176px, 224px"
+              priority
+              className="object-contain filter brightness-0 invert opacity-95 transition-none"
+            />
+          </div>
+        </div>
 
+        {/* Micro Rounded Icon (Bottom Left corner indicator) */}
+        <div className="absolute bottom-8 left-8 w-8 h-8 border border-zinc-800 rounded-full flex items-center justify-center text-xs font-bold text-zinc-400 select-none pointer-events-none">
+          N
+        </div>
+      </div>{" "}
+      {/* Closes the main outer section container */}
       {/* LOWER INTERACTION CONTENT */}
       <motion.div
         style={{ y: contentYOffset }}

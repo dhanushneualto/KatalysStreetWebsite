@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const AUTO_ROTATE_SPEED = 4000; // Cycles every 4 seconds
+const AUTO_ROTATE_SPEED = 10000; // Cycles every 10 seconds
 
 export default function CarouselFlat() {
   const panelsData = [
