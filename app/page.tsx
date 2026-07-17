@@ -506,11 +506,11 @@ export default function KatalystStreetDemo() {
           <div className="flex flex-col items-start gap-3">
             <div className="flex items-center justify-center select-none opacity-80 hover:opacity-100 transition-opacity">
               <Image
-                src="/logo.png"
+                src="/logonew1.png"
                 alt="Katalyst Street Footer Logo"
-                width={60}
-                height={60}
-                className="object-contain filter invert dark:invert-0 brightness-200"
+                width={90}
+                height={90}
+                className="object-contain filter invert dark "
               />
             </div>
             <div className="font-medium text-zinc-500 max-w-sm">
