@@ -9,6 +9,7 @@ interface PartnerCard {
   name: string;
   role: string;
   logoSrc: string;
+  isWhiteLogo?: boolean;
 }
 
 interface CaseStudyMatrix {
@@ -25,6 +26,7 @@ interface CaseStudyMatrix {
 
 export default function EcosystemSection() {
   const [activeStudy, setActiveStudy] = useState<CaseStudyMatrix | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   // ⚡ FIXED: Mounted lifecycle tracking variable prevents the Hydration/Portal runtime crash
   const [mounted, setMounted] = useState(false);
@@ -33,6 +35,29 @@ export default function EcosystemSection() {
     setMounted(true);
     return () => setMounted(false);
   }, []);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (activeStudy) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeStudy]);
 
   const strategicPartners: PartnerCard[] = [
     {
@@ -48,6 +73,7 @@ export default function EcosystemSection() {
     { name: "Databricks", role: "Data Platform", logoSrc: "/databricks.png" },
     { name: "Snowflake", role: "Data Platform", logoSrc: "/snowflake.png" },
     { name: "Tally", role: "Finance Partner", logoSrc: "/tally.png" },
+    { name: "Open AI", role: "AI Frontier Partner", logoSrc: "/openai.png" },
   ];
 
   const executionPartners: PartnerCard[] = [
@@ -75,6 +101,12 @@ export default function EcosystemSection() {
       name: "Neuroagent.AI",
       role: "AI Engineering",
       logoSrc: "/neuroagent.png",
+    },
+    {
+      name: "The DataPlan",
+      role: "AI Engineering",
+      logoSrc: "/dataplan.png",
+      isWhiteLogo: true,
     },
   ];
 
@@ -166,45 +198,58 @@ export default function EcosystemSection() {
     const duplicatedItems = [...items, ...items, ...items, ...items];
     return (
       <div
-        className="bg-zinc-50/50 dark:bg-zinc-900/10 border-y border-zinc-200/60 dark:border-zinc-800/40 py-5 px-8 md:px-24 flex items-center justify-between gap-8 relative left-1/2 right-1/2"
+        className="bg-zinc-50/50 dark:bg-zinc-900/10 border-y border-zinc-200/60 dark:border-zinc-800/40 py-4 sm:py-5 px-4 sm:px-8 md:px-24 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-8 relative left-1/2 right-1/2"
         style={{ width: "100vw", marginLeft: "-50vw", marginRight: "-50vw" }}
       >
-        <div className="w-44 flex-shrink-0">
-          <span className="text-xs font-black tracking-[0.25em] text-zinc-900 dark:text-zinc-400 uppercase block">
+        <div className="w-full sm:w-44 flex-shrink-0">
+          <span className="text-[10px] sm:text-xs font-black tracking-[0.15em] sm:tracking-[0.25em] text-zinc-900 dark:text-zinc-400 uppercase block">
             {titleText}
           </span>
         </div>
-        <div className="w-[1px] h-12 bg-zinc-200 dark:bg-zinc-800 flex-shrink-0" />
-        <div className="flex-grow overflow-hidden relative py-1">
+        <div className="hidden sm:block w-[1px] h-12 bg-zinc-200 dark:bg-zinc-800 flex-shrink-0" />
+        <div className="w-full sm:flex-grow overflow-hidden relative py-1">
           <motion.div
-            className="flex gap-12 w-max items-center"
+            className="flex gap-8 sm:gap-12 w-max items-center"
             variants={marqueeVariants(direction)}
             animate="animate"
           >
-            {duplicatedItems.map((partner, idx) => (
-              <div
-                key={idx}
-                className="flex items-center gap-4 select-none flex-shrink-0 w-[280px]"
-              >
-                <div className="w-24 h-10 relative flex-shrink-0 flex items-center justify-center">
-                  <Image
-                    src={partner.logoSrc}
-                    alt={partner.name}
-                    width={55}
-                    height={55}
-                    className="object-contain object-left"
-                  />
+            {duplicatedItems.map((partner, idx) => {
+              const needsDarkBackdrop = partner.isWhiteLogo; // 👈 check flag
+
+              return (
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 sm:gap-4 select-none flex-shrink-0 w-[220px] sm:w-[280px]"
+                >
+                  {/* Logo container with conditional dark background */}
+                  <div
+                    className={`w-16 sm:w-24 h-8 sm:h-10 relative flex-shrink-0 flex items-center justify-center rounded-lg ${
+                      needsDarkBackdrop
+                        ? "bg-zinc-800 dark:bg-zinc-950"
+                        : "bg-transparent"
+                    }`}
+                  >
+                    <Image
+                      src={partner.logoSrc}
+                      alt={partner.name}
+                      width={isMobile ? 40 : 55}
+                      height={isMobile ? 40 : 55}
+                      className={`object-contain object-left ${
+                        needsDarkBackdrop ? "brightness-0 invert" : ""
+                      }`}
+                    />
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-xs sm:text-sm font-bold text-zinc-900 tracking-tight leading-none">
+                      {partner.name}
+                    </span>
+                    <span className="text-[8px] sm:text-[10px] font-medium text-zinc-500 tracking-wide uppercase mt-1 sm:mt-1.5 leading-none line-clamp-2">
+                      {partner.role}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex flex-col text-left">
-                  <span className="text-sm font-bold text-zinc-900 tracking-tight leading-none">
-                    {partner.name}
-                  </span>
-                  <span className="text-[10px] font-medium text-zinc-500 tracking-wide uppercase mt-1.5 leading-none">
-                    {partner.role}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </motion.div>
         </div>
       </div>
@@ -214,67 +259,68 @@ export default function EcosystemSection() {
   return (
     <section
       id="ecosystem"
-      className="w-full max-w-7xl mx-auto px-4 py-24 text-left scroll-mt-24 overflow-visible"
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20 md:py-24 text-left scroll-mt-24 overflow-visible"
     >
       {/* Header Typography Group */}
-      <div className="space-y-4 mb-20 max-w-5xl">
-        <span className="text-[10px] md:text-xs font-black tracking-[0.3em] uppercase text-black">
+      <div className="space-y-3 sm:space-y-4 mb-12 sm:mb-16 md:mb-20 max-w-5xl">
+        <span className="text-[10px] md:text-xs font-black tracking-[0.2em] sm:tracking-[0.3em] uppercase text-black">
           PARTNERSHIP ECOSYSTEM
         </span>
-        <h2 className="text-4xl md:text-7xl font-black tracking-tight text-black uppercase leading-[0.95]">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight text-black uppercase leading-[1.05] sm:leading-[0.95]">
           Enterprise AI Requires <br /> An Ecosystem
         </h2>
-        <p className="text-base md:text-lg text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl pt-2">
+        <p className="text-sm sm:text-base md:text-lg text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl pt-2">
           No single company can deliver enterprise transformation alone.
           Katalyst Street orchestrates the right mix of cloud, data, and
           execution partners.
         </p>
       </div>
 
-      <div className="space-y-4 w-full relative z-20">
+      <div className="space-y-3 sm:space-y-4 w-full relative z-20 ">
         {renderPartnerRow("Strategic Partnerships", strategicPartners, "left")}
         {renderPartnerRow("Execution Partnerships", executionPartners, "right")}
       </div>
 
       {/* CASE STUDIES PARENT ZONE */}
-      <div className="mt-32 pt-16 border-t border-zinc-100/10 space-y-12 w-full">
-        <div className="max-w-4xl space-y-4">
+      <div className="mt-20 sm:mt-24 md:mt-32 pt-10 sm:pt-12 md:pt-16 border-t border-zinc-100/10 space-y-8 sm:space-y-12 w-full">
+        <div className="max-w-4xl space-y-3 sm:space-y-4">
           <span className="text-[10px] font-black tracking-[0.2em] text-dark uppercase block">
             GLOBAL CUSTOMERS
           </span>
-          <h3 className="text-3xl md:text-5xl font-black tracking-tight text-black uppercase leading-none">
+          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-black uppercase leading-none">
             Selected Case Studies
           </h3>
-          <p className="text-base text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl">
+          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-900 font-dark max-w-2xl">
             Explore how Katalyst Street helps leading multi-nationals accelerate
             AI. Click any card to expand full technical matrix.
           </p>
         </div>
 
         {/* COMPACT GRID VIEW BLOCK */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full items-stretch">
           {caseStudiesData.map((study, idx) => (
             <motion.div
               key={idx}
               layoutId={`card-container-${study.title}`}
               onClick={() => setActiveStudy(study)}
-              className="w-full bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-6 flex flex-col justify-between space-y-6 text-left cursor-pointer hover:shadow-lg transition-shadow duration-300"
+              className="w-full bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-5 sm:space-y-6 text-left cursor-pointer hover:shadow-lg transition-shadow duration-300 active:scale-[0.98] sm:active:scale-100"
+              style={{ WebkitTapHighlightColor: "transparent" }}
             >
-              <div className="space-y-3">
-                <span className="text-[9px] font-bold tracking-widest text-zinc-900 dark:text-zinc-900 uppercase block">
+              <div className="space-y-2 sm:space-y-3">
+                <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-zinc-900 dark:text-zinc-900 uppercase block">
                   {study.tag}
                 </span>
-                <h4 className="text-2xl font-black tracking-tight text-black uppercase leading-none">
+                <h4 className="text-xl sm:text-2xl font-black tracking-tight text-black uppercase leading-none">
                   {study.title}
                 </h4>
-                <p className="text-[11px] font-medium text-zinc-900 leading-normal">
+                <p className="text-[10px] sm:text-[11px] font-medium text-zinc-900 leading-normal">
                   {study.subTitle}
                 </p>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {study.badges.slice(0, 2).map((badge, bIdx) => (
                     <span
                       key={bIdx}
-                      className="px-2 py-0.5 rounded-full bg-zinc-200/60 dark:bg-zinc-500/50 text-[9px] font-semibold text-zinc-300 dark:text-zinc-900"
+                      className="px-2 py-0.5 rounded-full bg-zinc-200/60 dark:bg-zinc-500/50 text-[8px] sm:text-[9px] font-semibold text-zinc-300 dark:text-zinc-900"
                     >
                       {badge}
                     </span>
@@ -282,13 +328,13 @@ export default function EcosystemSection() {
                 </div>
               </div>
 
-              <p className="text-xs font-medium text-zinc-900 dark:text-zinc-900 leading-relaxed line-clamp-3">
+              <p className="text-[11px] sm:text-xs font-medium text-zinc-900 dark:text-zinc-900 leading-relaxed line-clamp-3">
                 {study.summary}
               </p>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-200/60 dark:border-zinc-800/60 text-[11px] mt-auto">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-zinc-200/60 dark:border-zinc-800/60 text-[10px] sm:text-[11px] mt-auto">
                 <div>
-                  <h5 className="font-black text-black uppercase tracking-wider mb-1">
+                  <h5 className="font-black text-black uppercase tracking-wider mb-1 text-[9px] sm:text-[10px]">
                     THE CHALLENGE
                   </h5>
                   <p className="text-zinc-900 line-clamp-2">
@@ -296,7 +342,7 @@ export default function EcosystemSection() {
                   </p>
                 </div>
                 <div>
-                  <h5 className="font-black text-black uppercase tracking-wider mb-1">
+                  <h5 className="font-black text-black uppercase tracking-wider mb-1 text-[9px] sm:text-[10px]">
                     THE STRATEGY
                   </h5>
                   <p className="text-zinc-900 line-clamp-2">{study.strategy}</p>
@@ -313,7 +359,7 @@ export default function EcosystemSection() {
             <AnimatePresence>
               {activeStudy && (
                 <div
-                  className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 md:p-6"
+                  className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 md:p-6"
                   style={{ zIndex: 9999999 }}
                 >
                   {/* Invisible backdrop box that covers ONLY the background space */}
@@ -328,34 +374,34 @@ export default function EcosystemSection() {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.96, y: 10 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
-                    // ⚡ FIXED: Typed event parameter to prevent explicit implicitly 'any' compiler flags
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                    className="bg-zinc-950 text-white border border-zinc-800 rounded-3xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-6 md:p-8 relative shadow-2xl text-left z-10"
+                    className="bg-zinc-950 text-white border border-zinc-800 rounded-2xl sm:rounded-3xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] overflow-y-auto p-4 sm:p-6 md:p-8 relative shadow-2xl text-left z-10 mx-2"
                   >
                     {/* Close Trigger Button */}
                     <button
                       onClick={() => setActiveStudy(null)}
-                      className="absolute top-5 right-5 w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer z-50 text-sm outline-none"
+                      className="absolute top-3 right-3 sm:top-5 sm:right-5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer z-50 text-xs sm:text-sm outline-none"
+                      aria-label="Close modal"
                     >
                       ✕
                     </button>
 
                     {/* Header content */}
-                    <div className="space-y-2 pr-8">
-                      <span className="text-[9px] font-bold tracking-widest text-zinc-100 uppercase block">
+                    <div className="space-y-2 pr-6 sm:pr-8">
+                      <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-zinc-100 uppercase block">
                         {activeStudy.tag}
                       </span>
-                      <h4 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-tight">
+                      <h4 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-tight">
                         {activeStudy.title}
                       </h4>
-                      <p className="text-xs font-medium text-zinc-100 leading-normal">
+                      <p className="text-[10px] sm:text-xs font-medium text-zinc-100 leading-normal">
                         {activeStudy.subTitle}
                       </p>
                       <div className="flex flex-wrap gap-1.5 pt-1">
                         {activeStudy.badges.map((badge, bIdx) => (
                           <span
                             key={bIdx}
-                            className="px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800/60 text-[9px] font-semibold text-white"
+                            className="px-2 sm:px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800/60 text-[8px] sm:text-[9px] font-semibold text-white"
                           >
                             {badge}
                           </span>
@@ -364,55 +410,55 @@ export default function EcosystemSection() {
                     </div>
 
                     {/* Body Text Fields */}
-                    <div className="space-y-5 pt-2">
+                    <div className="space-y-4 sm:space-y-5 pt-2">
                       <div className="space-y-1">
-                        <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                        <h5 className="text-[9px] sm:text-[10px] font-black text-white tracking-wider uppercase">
                           OVERVIEW SUMMARY
                         </h5>
-                        <p className="text-xs leading-relaxed text-zinc-100 font-normal">
+                        <p className="text-[11px] sm:text-xs leading-relaxed text-zinc-100 font-normal">
                           {activeStudy.summary}
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 pt-1">
                         <div className="space-y-1">
-                          <h5 className="text-[10px] font-black text-whitetracking-wider uppercase">
+                          <h5 className="text-[9px] sm:text-[10px] font-black text-white tracking-wider uppercase">
                             THE CHALLENGE
                           </h5>
-                          <p className="text-[11px] leading-relaxed text-zinc-100 font-normal">
+                          <p className="text-[10px] sm:text-[11px] leading-relaxed text-zinc-100 font-normal">
                             {activeStudy.challenge}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                          <h5 className="text-[9px] sm:text-[10px] font-black text-white tracking-wider uppercase">
                             THE STRATEGY
                           </h5>
-                          <p className="text-[11px] leading-relaxed  text-zinc-100 font-normal">
+                          <p className="text-[10px] sm:text-[11px] leading-relaxed text-zinc-100 font-normal">
                             {activeStudy.strategy}
                           </p>
                         </div>
                       </div>
 
                       <div className="space-y-1">
-                        <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                        <h5 className="text-[9px] sm:text-[10px] font-black text-white tracking-wider uppercase">
                           THE SOLUTION
                         </h5>
-                        <p className="text-[11px] leading-relaxed text-zinc-100 font-normal">
+                        <p className="text-[10px] sm:text-[11px] leading-relaxed text-zinc-100 font-normal">
                           {activeStudy.solution}
                         </p>
                       </div>
 
                       <div className="space-y-2 pt-1">
-                        <h5 className="text-[10px] font-black text-white tracking-wider uppercase">
+                        <h5 className="text-[9px] sm:text-[10px] font-black text-white tracking-wider uppercase">
                           KEY RESULTS
                         </h5>
                         <ul className="space-y-1.5">
                           {activeStudy.results.map((res, rIdx) => (
                             <li
                               key={rIdx}
-                              className="text-[11px] font-bold text-zinc-300 flex items-start gap-2"
+                              className="text-[10px] sm:text-[11px] font-bold text-zinc-300 flex items-start gap-2"
                             >
-                              <span className="select-none text-zinc-500 pt-0.5">
+                              <span className="select-none text-zinc-500 pt-0.5 flex-shrink-0">
                                 ✓
                               </span>
                               <span className="leading-snug">{res}</span>

@@ -32,12 +32,13 @@ export default function TeamSection() {
         },
         {
           label: "Business Growth",
-          details: "Corporate Strategy and GTM (Go-To-Market) & Partnerships",
+          details:
+            "Corporate Strategy and Global GTM Strategy, Corporate Finance, and Partnerships",
         },
         {
           label: "Industry Domains",
           details:
-            "Financial Services, Consumer Credit & Payments, Manufacturing & Supply Chain, Healthcare, Retail",
+            "Financial Services, Consumer Credit & Payments, Manufacturing & Supply Chain, Healthcare, Retail and Startups",
         },
       ],
       academia: [
@@ -61,7 +62,7 @@ export default function TeamSection() {
         {
           label: "Growth & Market Execution",
           details:
-            "Global GTM Strategy, Enterprise Sales, Business Development, Strategic Partnerships",
+            "GTM Strategy, Enterprise Sales, Business Development, Strategic Partnerships",
         },
         {
           label: "Operations & Governance",
@@ -76,7 +77,7 @@ export default function TeamSection() {
       ],
       academia: ["Columbia Business School", "Williams College"],
       footerQuote:
-        "Andrew combines sophisticated financial acumen with an aggressive enterprise growth mindset to help organizations scale, navigate complex market dynamics, and capture global opportunities.",
+        "Andrew combines deep relationship development skills and sophisticated deal making acumen with an aggressive enterprise growth mindset to help organizations scale, navigate complex market dynamics, and capture value.",
     },
   ];
 

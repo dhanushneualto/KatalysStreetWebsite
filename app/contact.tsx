@@ -14,7 +14,7 @@ export default function ContactSection() {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [result, setResult] = useState(""); // ⚡ Added Web3Forms result text handler state
+  const [result, setResult] = useState(""); // ⚡  Web3Forms result text handler state
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
