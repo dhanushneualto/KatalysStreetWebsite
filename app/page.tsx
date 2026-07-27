@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Cpu, Cloud, ShieldAlert, Menu, X } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import Carousel360 from "@/app/carousel360";
 import PlatformShowcase from "@/app/platformshowcase";
 import EcosystemSection from "@/app/ecosystem";
@@ -16,127 +16,121 @@ import JourneySection from "@/app/journey";
 export default function KatalystStreetDemo() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Segmented Control State Matrix
   const tabs = ["STRATEGY", "FOUNDATIONS", "BUILD", "SCALE", "OPTIMIZE"];
   const [activeTab, setActiveTab] = useState("BUILD");
-
-  // State managers tracking active sub-slide drilldowns
-  const [subSlideIndex, setSubSlideIndex] = React.useState(0);
-  const [activeJourneyStage, setActiveJourneyStage] = useState(1);
-
-  // Dynamic Scroll Tracker State for Phase Switching
   const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTab((currentTab) => {
-        const currentIndex = tabs.indexOf(currentTab);
-        const nextIndex = (currentIndex + 1) % tabs.length;
-        return tabs[nextIndex];
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [activeTab]);
-
-  // Dynamic Scroll Listener tracking when layout shifts to white bg zone
+  // Detect mobile for performance
   useEffect(() => {
-    const handleScrollLifecycle = () => {
-      if (!containerRef.current) return;
-
-      const metrics = containerRef.current.getBoundingClientRect();
-      const scrolledPercentage =
-        Math.abs(metrics.top) / (metrics.height - window.innerHeight);
-
-      // Matches the exact transition point where bg becomes white (0.06 - 0.09)
-      if (scrolledPercentage > 0.06) {
-        setIsScrolledPastThreshold(true);
-      } else {
-        setIsScrolledPastThreshold(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScrollLifecycle);
-    return () => window.removeEventListener("scroll", handleScrollLifecycle);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Close mobile menu on resize to desktop
+  // Auto-rotate tabs
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsMobileMenuOpen(false);
-      }
+    const interval = setInterval(() => {
+      setActiveTab((current) => {
+        const idx = tabs.indexOf(current);
+        return tabs[(idx + 1) % tabs.length];
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Scroll threshold logic
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const scrolled = Math.abs(rect.top) / (rect.height - window.innerHeight);
+      setIsScrolledPastThreshold(scrolled > 0.06);
     };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close mobile menu on resize or scroll
+  useEffect(() => {
+    const handleResize = () =>
+      window.innerWidth >= 1024 && setIsMobileMenuOpen(false);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close mobile menu on scroll
   useEffect(() => {
-    const handleScroll = () => {
-      if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => isMobileMenuOpen && setIsMobileMenuOpen(false);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMobileMenuOpen]);
 
-  // 1. Capture absolute scroll metrics across the layout lifespan
+  // Lock body scroll when mobile menu open
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
+
+  // -------- SMOOTH SCROLL ANIMATIONS --------
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // 2. The "Dome Opening Portal Effect"
+  // Spring smoothing eliminates lag on both desktop and mobile
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    mass: 0.5,
+  });
+
   const portalScale = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0, 0.12, 0.25],
-    [1, 1.9, 4.0],
+    isMobile ? [1, 1.5, 2.5] : [1, 1.9, 4.0],
   );
 
-  // OPTIMIZED: Accelerated opacity exit curve so the hero text vanishes completely by 6% scroll
   const portalOpacity = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0, 0.03, 0.06],
-    [1, 0.5, 0],
+    isMobile ? [1, 0.7, 0] : [1, 0.5, 0],
   );
 
-  // 3. Sync background crossfades exactly with the scale-through portal
   const bgTransition = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0.01, 0.05],
     ["#09090b", "#ffffff"],
   );
 
   const heroTextTransition = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0, 0.04, 0.06],
     ["#ffffff", "#e4e4e7", "#f4f4f5"],
   );
 
-  // FIXED: Adjusted to flip contrast exactly when the background changes to pure white
   const textTransition = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0.06, 0.06],
     ["#fafafa", "#09090b"],
   );
 
   const navBorder = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0.06, 0.09],
     ["rgba(24,24,27,0.8)", "rgba(102, 102, 106, 0.6)"],
   );
 
-  // 4. Staggered Lower Layout Entry Mechanics
   const contentYOffset = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0, 0.08, 0.24],
-    [600, 400, 0],
+    isMobile ? [0, 0, 0] : [600, 400, 0],
   );
 
-  // ⚡ DYNAMIC LINK CLASSES: Updates text style based on active viewport transition sequence
+  // -------- Navigation links --------
   const linkStyles = isScrolledPastThreshold
     ? "text-zinc-600 hover:text-black transition-colors"
     : "text-zinc-300 hover:text-white transition-colors";
@@ -151,13 +145,64 @@ export default function KatalystStreetDemo() {
     { href: "#contact", label: "Get In Touch" },
   ];
 
+  // Memoize tab buttons
+  const tabButtons = useMemo(() => {
+    return tabs.map((tab, index) => {
+      const isActive = activeTab === tab;
+      const shape =
+        index === 0
+          ? "polygon(0% 0%, 92% 0%, 100% 50%, 92% 100%, 0% 100%)"
+          : index === tabs.length - 1
+            ? "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 8% 50%)"
+            : "polygon(0% 0%, 92% 0%, 100% 50%, 92% 100%, 0% 100%, 8% 50%)";
+
+      return (
+        <button
+          key={tab}
+          onClick={() => setActiveTab(tab)}
+          className={`flex-1 py-1.5 sm:py-3 md:py-3.5 text-[6px] sm:text-[10px] md:text-xs font-bold tracking-wider md:tracking-widest transition-all duration-300 uppercase select-none outline-none relative text-center min-w-[40px] sm:min-w-[80px] md:min-w-[120px] pl-2 sm:pl-5 md:pl-6 pr-0.5 sm:pr-2
+            ${index !== 0 ? "-ml-1 sm:-ml-3 md:-ml-5" : ""} 
+            ${
+              isActive
+                ? "text-white font-black bg-black dark:bg-zinc-950"
+                : "text-zinc-400 bg-white hover:text-black border-y border-r border-zinc-200"
+            }
+          `}
+          style={{
+            clipPath: shape,
+            WebkitClipPath: shape,
+            WebkitTapHighlightColor: "transparent",
+          }}
+        >
+          {isActive && (
+            <motion.div
+              layoutId="activeSegment"
+              className="absolute inset-0 bg-black dark:bg-zinc-950 -z-10"
+              transition={{
+                type: "spring",
+                stiffness: 380,
+                damping: 30,
+              }}
+              style={{
+                clipPath: shape,
+                WebkitClipPath: shape,
+              }}
+            />
+          )}
+          <span className="relative z-10 block pr-0.5 sm:pr-2">{tab}</span>
+        </button>
+      );
+    });
+  }, [activeTab, tabs]);
+
   return (
     <motion.div
       ref={containerRef}
       style={{ backgroundColor: bgTransition, color: textTransition }}
-      className="min-h-[250vh] font-sans antialiased select-none transition-colors duration-200 relative"
+      // FIXED: Removed will-change-transform to stop mobile GPU lockup
+      className="min-h-[250vh] w-full max-w-[100vw] font-sans antialiased select-none transition-colors duration-200 relative overflow-clip"
     >
-      {/* Persistent Navigation Panel */}
+      {/* Navigation */}
       <motion.nav
         style={{ borderColor: navBorder }}
         className={`fixed top-0 left-0 w-full z-50 px-4 md:px-6 py-3 md:py-4 flex justify-between items-center transition-all duration-500 ease-in-out ${
@@ -166,23 +211,22 @@ export default function KatalystStreetDemo() {
             : "bg-transparent border-b border-zinc-100/80 text-white"
         }`}
       >
-        {/* Logo */}
         <div className="flex items-center gap-2">
           <Image
             src="/logonew1.png"
             alt="Katalyst Street Logo"
-            width={isMobileMenuOpen ? 90 : 100}
-            height={isMobileMenuOpen ? 90 : 100}
+            width={isMobileMenuOpen ? 60 : 70}
+            height={isMobileMenuOpen ? 60 : 70}
             className={`object-contain transition-all duration-500 ${
               isScrolledPastThreshold
                 ? "filter brightness-0 grayscale contrast-200"
                 : "filter brightness-0 invert"
-            } w-[80px] h-[80px] md:w-[120px] md:h-[120px]`}
+            } w-[50px] h-[50px] sm:w-[80px] sm:h-[80px] md:w-[120px] md:h-[120px]`}
+            priority
           />
         </div>
 
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex gap-6 xl:gap-8 text-sm font-medium transition-colors duration-500">
+        <div className="hidden lg:flex gap-6 xl:gap-8 text-sm font-medium">
           {navLinks.map((link) => (
             <a key={link.href} href={link.href} className={linkStyles}>
               {link.label}
@@ -190,35 +234,29 @@ export default function KatalystStreetDemo() {
           ))}
         </div>
 
-        {/* Mobile Menu Toggle */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden relative z-50 p-2 -mr-2"
+          className="lg:hidden relative z-50 p-2 touch-manipulation"
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? (
             <X
-              className={`w-6 h-6 ${
-                isScrolledPastThreshold ? "text-black" : "text-white"
-              }`}
+              className={`w-6 h-6 ${isScrolledPastThreshold ? "text-black" : "text-white"}`}
             />
           ) : (
             <Menu
-              className={`w-6 h-6 ${
-                isScrolledPastThreshold ? "text-black" : "text-white"
-              }`}
+              className={`w-6 h-6 ${isScrolledPastThreshold ? "text-black" : "text-white"}`}
             />
           )}
         </button>
 
-        {/* Mobile Navigation Overlay */}
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden fixed top-0 left-0 w-full h-screen bg-white z-40 flex flex-col items-center justify-center gap-6"
+            className="lg:hidden fixed top-0 left-0 w-full h-screen bg-white z-40 flex flex-col items-center justify-center gap-6 px-4"
           >
             {navLinks.map((link, index) => (
               <motion.a
@@ -237,57 +275,62 @@ export default function KatalystStreetDemo() {
         )}
       </motion.nav>
 
-      {/* STICKY VIEWPORT PORTAL (Locks to screen while scaling) */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pointer-events-none">
+      {/* Sticky Hero Portal */}
+      <div className="sticky top-0 h-screen w-full max-w-[100vw] overflow-hidden flex items-center justify-center pointer-events-none">
         <motion.div
-          style={{ scale: portalScale, opacity: portalOpacity }}
+          style={{
+            scale: portalScale,
+            opacity: portalOpacity,
+            willChange: "transform, opacity",
+          }}
           className="flex flex-col items-center justify-center text-center px-4 w-full max-w-5xl"
         >
           <motion.h1
             style={{ color: heroTextTransition }}
-            className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter uppercase leading-none"
+            className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter uppercase leading-none"
           >
             KATALYST STREET
           </motion.h1>
-          <p className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.4em] text-zinc-500 uppercase mt-4">
+          <p className="text-[10px] sm:text-sm md:text-base font-semibold tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.4em] text-zinc-500 uppercase mt-4">
             The Enterprise AI Transformation Company
           </p>
         </motion.div>
 
-        {/* Bottom Right Beast Image */}
-        <div className="absolute right-4 sm:right-6 bottom-4 sm:bottom-6 w-32 h-32 sm:w-44 sm:h-44 md:w-56 md:h-56 select-none pointer-events-none z-10">
+        <div className="absolute right-4 sm:right-6 bottom-4 sm:bottom-6 w-20 h-20 sm:w-44 sm:h-44 md:w-56 md:h-56 select-none pointer-events-none z-10">
           <div className="relative w-full h-full">
             <Image
               src="/beast.png"
               alt="Tame The Beast AI Emblem"
               fill
-              sizes="(max-width: 640px) 128px, (max-width: 768px) 176px, 224px"
+              sizes="(max-width: 640px) 80px, (max-width: 768px) 176px, 224px"
               priority
-              className="object-contain filter brightness-0 invert opacity-95 transition-none"
+              className="object-contain filter brightness-0 invert opacity-95"
             />
           </div>
         </div>
 
-        {/* Micro Rounded Icon (Bottom Left corner indicator) */}
         <div className="absolute bottom-6 sm:bottom-8 left-4 sm:left-8 w-6 h-6 sm:w-8 sm:h-8 border border-zinc-800 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold text-zinc-400 select-none pointer-events-none">
           N
         </div>
       </div>
 
-      {/* LOWER INTERACTION CONTENT */}
+      {/* Main Content */}
       <motion.div
-        style={{ y: contentYOffset }}
-        className="relative z-20 max-w-6xl mx-auto px-4 sm:px-8 md:px-24 pb-16 md:pb-32 space-y-24 md:space-y-48"
+        style={{
+          y: contentYOffset,
+        }}
+        // FIXED: Removed willChange: "transform" from inline styles, keeping only hardware-friendly offset
+        className="relative z-20 w-full md:max-w-6xl mx-auto px-4 sm:px-8 md:px-24 pb-16 md:pb-32 space-y-16 md:space-y-48"
       >
         {/* Core Subheader Panel */}
-        <section className="min-h-screen flex flex-col items-center justify-center text-center pt-24">
-          <div className="max-w-4xl space-y-6 md:space-y-8 flex flex-col items-center justify-center">
+        <section className="min-h-screen flex flex-col items-center justify-center text-center pt-16 sm:pt-24 w-full">
+          <div className="max-w-4xl space-y-4 sm:space-y-6 md:space-y-8 flex flex-col items-center justify-center w-full px-2">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[10px] sm:text-xs font-bold tracking-widest text-black uppercase"
+              transition={{ duration: 0.4 }}
+              className="text-[8px] sm:text-xs font-bold tracking-widest text-black uppercase break-words w-full"
             >
               Katalyst Street is the Enterprise AI Transformation Company.
             </motion.span>
@@ -296,15 +339,11 @@ export default function KatalystStreetDemo() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{
-                duration: 0.7,
-                delay: 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-none text-black italic"
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-[1.1] text-black italic break-words w-full max-w-full"
             >
-              From AI Ambition To <br />
-              <span className="text-black font-light font-serif italic">
+              From AI Ambition To <br className="hidden sm:block" />
+              <span className="text-black font-light font-serif italic block sm:inline break-words">
                 Measurable Business Outcome
               </span>
             </motion.h2>
@@ -313,33 +352,28 @@ export default function KatalystStreetDemo() {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{
-                duration: 0.7,
-                delay: 0.2,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="text-base sm:text-lg md:text-xl text-zinc-800 dark:text-zinc-800 font-dark leading-relaxed max-w-2xl px-2"
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="text-sm sm:text-lg md:text-xl text-zinc-800 dark:text-zinc-800 font-dark leading-relaxed max-w-2xl px-2 break-words"
             >
               We help organizations move from AI ambition to measurable business
               outcomes through Strategy, Governance, Trusted Data, Intelligent
               Automation, and Optimization.
             </motion.p>
 
-            {/* Seamless Segmented Control Component Section */}
-            <div className="flex flex-wrap items-center justify-center gap-x-1 sm:gap-x-2 gap-y-2 pt-4 text-center w-full max-w-5xl mx-auto">
-              <p className="text-[10px] sm:text-xs font-semibold tracking-wider text-zinc-800 dark:text-zinc-800 uppercase whitespace-nowrap w-full sm:w-auto mb-1 sm:mb-0">
+            {/* Segmented Control */}
+            <div className="flex flex-col items-center justify-center gap-2 pt-4 text-center w-full max-w-full mx-auto">
+              <p className="text-[8px] sm:text-xs font-semibold tracking-wider text-zinc-800 uppercase w-full break-words">
                 Unlike traditional consulting firms, we combine:
               </p>
-
               <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
                 {["Advisory", "Engineering", "Platforms", "Ecosystem"].map(
-                  (item, index) => (
+                  (item, idx) => (
                     <React.Fragment key={item}>
-                      <span className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border-2 border-black font-black text-[10px] sm:text-xs text-black bg-transparent transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 select-none whitespace-nowrap">
+                      <span className="px-2 sm:px-4 py-0.5 sm:py-1.5 rounded-full border-2 border-black font-black text-[8px] sm:text-xs text-black bg-transparent transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 select-none whitespace-nowrap">
                         {item}
                       </span>
-                      {index < 3 && (
-                        <span className="text-zinc-400 font-light text-base sm:text-lg select-none">
+                      {idx < 3 && (
+                        <span className="text-zinc-400 font-light text-sm sm:text-lg select-none">
                           +
                         </span>
                       )}
@@ -349,8 +383,8 @@ export default function KatalystStreetDemo() {
               </div>
             </div>
 
-            {/* Floating Action Spans */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 pt-6 px-2">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center justify-center w-full max-w-full gap-1.5 sm:gap-3 md:gap-4 pt-4 sm:pt-6 px-1">
               {[
                 "Schedule Executive Briefing",
                 "Take AI Readiness Assessment",
@@ -358,104 +392,50 @@ export default function KatalystStreetDemo() {
               ].map((action) => (
                 <span
                   key={action}
-                  className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 rounded-full border-2 border-black font-black text-xs sm:text-sm md:text-base text-black bg-transparent transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 select-none whitespace-nowrap"
+                  className="px-2 sm:px-4 md:px-5 py-1 sm:py-2 rounded-full border-2 border-black font-black text-[8px] sm:text-sm md:text-base text-black bg-transparent transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 select-none text-center max-w-full whitespace-normal sm:whitespace-nowrap touch-manipulation"
                 >
                   {action}
                 </span>
               ))}
             </div>
 
-            {/* High-Contrast Interlocking White Chevron Arrow Timeline */}
-            <div className="w-full flex justify-center pt-2 relative z-30 overflow-x-auto">
-              <div className="inline-flex items-center bg-white relative w-full max-w-4xl justify-between rounded-md border border-zinc-200 p-1 shadow-sm min-w-[600px] md:min-w-0">
-                {tabs.map((tab, index) => {
-                  const isActive = activeTab === tab;
-
-                  const middleChevron =
-                    "polygon(0% 0%, 92% 0%, 100% 50%, 92% 100%, 0% 100%, 8% 50%)";
-                  const firstChevron =
-                    "polygon(0% 0%, 92% 0%, 100% 50%, 92% 100%, 0% 100%)";
-                  const lastChevron =
-                    "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 8% 50%)";
-
-                  const currentShape =
-                    index === 0
-                      ? firstChevron
-                      : index === tabs.length - 1
-                        ? lastChevron
-                        : middleChevron;
-
-                  return (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`flex-1 py-2 sm:py-3 md:py-3.5 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-wider md:tracking-widest transition-all duration-300 uppercase select-none outline-none relative text-center min-w-[80px] sm:min-w-[100px] md:min-w-[120px] pl-4 sm:pl-5 md:pl-6 pr-1 sm:pr-2
-                        ${index !== 0 ? "-ml-2 sm:-ml-3 md:-ml-5" : ""} 
-                        ${
-                          isActive
-                            ? "text-white font-black bg-black dark:bg-zinc-950"
-                            : "text-zinc-400 bg-white hover:text-black border-y border-r border-zinc-200"
-                        }
-                      `}
-                      style={{
-                        clipPath: currentShape,
-                        WebkitClipPath: currentShape,
-                        WebkitTapHighlightColor: "transparent",
-                      }}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeSegment"
-                          className="absolute inset-0 bg-black dark:bg-zinc-950 -z-10"
-                          transition={{
-                            type: "spring",
-                            stiffness: 380,
-                            damping: 30,
-                          }}
-                          style={{
-                            clipPath: currentShape,
-                            WebkitClipPath: currentShape,
-                          }}
-                        />
-                      )}
-                      <span className="relative z-10 block pr-1 sm:pr-2">
-                        {tab}
-                      </span>
-                    </button>
-                  );
-                })}
+            {/* Chevron Tabs */}
+            <div className="w-full flex justify-center pt-2 relative z-30 overflow-x-auto overflow-y-visible px-1">
+              <div className="inline-flex items-center bg-white relative w-full max-w-4xl justify-between rounded-md border border-zinc-200 p-0.5 sm:p-1 shadow-sm min-w-[280px] sm:min-w-[400px] md:min-w-0">
+                {tabButtons}
               </div>
             </div>
 
-            <div className="w-full pt-8 md:pt-12">
+            {/* Carousel */}
+            <div className="w-full pt-8 md:pt-12 max-w-[100vw] overflow-hidden">
               <Carousel360 />
             </div>
           </div>
         </section>
 
-        {/* SECTION: The Enterprise Reality — Structural Grid Split */}
-        <section className="w-full max-w-6xl mx-auto px-2 sm:px-4 py-12 md:py-24 text-left">
+        {/* Enterprise Reality Section */}
+        <section className="w-full max-w-6xl mx-auto px-2 sm:px-4 py-12 md:py-24 text-left overflow-hidden">
           <div className="space-y-3 md:space-y-4 mb-8 md:mb-16 max-w-4xl">
             <span className="text-[10px] md:text-xs font-black tracking-[0.2em] sm:tracking-[0.3em] uppercase text-black">
               THE ENTERPRISE REALITY
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black tracking-tight text-black uppercase leading-[1.1] md:leading-[0.95]">
+            <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-6xl font-black tracking-tight text-black uppercase leading-[1.1] md:leading-[0.95] break-words">
               Most AI Initiatives Don't Fail <br />
               Because of AI
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-zinc-900 dark:text-zinc-900 font-dark max-w-3xl leading-relaxed pt-2">
+            <p className="text-sm sm:text-base md:text-lg text-zinc-900 font-dark max-w-3xl leading-relaxed pt-2 break-words">
               They fail because organizations struggle with the fundamentals. AI
               transformation requires more than technology — it requires a
               transformation operating model.
             </p>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch w-full">
-            <div className="bg-zinc-50 dark:bg-zinc-300/40 border border-zinc-500/60 dark:border-zinc-800/60 rounded-2xl p-6 sm:p-8 md:p-12 flex flex-col justify-between">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch w-full max-w-full">
+            <div className="bg-zinc-50 dark:bg-zinc-300/40 border border-zinc-500/60 rounded-2xl p-4 sm:p-8 md:p-12 flex flex-col justify-between">
               <div>
-                <h3 className="font-black tracking-widest uppercase text-black mb-6 md:mb-8 text-sm md:text-base">
+                <h3 className="font-black tracking-widest uppercase text-black mb-4 md:mb-8 text-xs sm:text-sm md:text-base">
                   THE CHALLENGES
                 </h3>
-                <ul className="space-y-3 md:space-y-4 text-xs sm:text-sm md:text-base font-dark text-black">
+                <ul className="space-y-2 md:space-y-4 text-xs sm:text-sm md:text-base font-dark text-black">
                   {[
                     "Unclear strategic priorities",
                     "Shadow AI proliferating across teams",
@@ -467,22 +447,22 @@ export default function KatalystStreetDemo() {
                   ].map((challenge) => (
                     <li
                       key={challenge}
-                      className="flex items-start gap-2 sm:gap-3"
+                      className="flex items-start gap-2 sm:gap-3 w-full"
                     >
                       <span className="mt-1 sm:mt-1.5 h-1 sm:h-1.5 w-1 sm:w-1.5 rounded-full bg-black flex-shrink-0" />
-                      <div>{challenge}</div>
+                      <div className="break-words">{challenge}</div>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <div className="bg-zinc-50 dark:bg-zinc-300/40 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-6 sm:p-8 md:p-12 md:pr-16 flex flex-col justify-between">
+            <div className="bg-zinc-50 dark:bg-zinc-300/40 border border-zinc-200/60 rounded-2xl p-4 sm:p-8 md:p-12 md:pr-16 flex flex-col justify-between">
               <div>
-                <h3 className="font-black tracking-widest uppercase text-black mb-6 md:mb-8 text-sm md:text-base">
+                <h3 className="font-black tracking-widest uppercase text-black mb-4 md:mb-8 text-xs sm:text-sm md:text-base">
                   THE KATALYST SOLUTION
                 </h3>
-                <ul className="space-y-3 md:space-y-4 text-xs sm:text-sm md:text-base font-dark text-black">
+                <ul className="space-y-2 md:space-y-4 text-xs sm:text-sm md:text-base font-dark text-black">
                   {[
                     {
                       bold: "StrategyMax",
@@ -492,14 +472,8 @@ export default function KatalystStreetDemo() {
                       bold: "PMO-Max",
                       light: "— Enterprise AI Governance Platform",
                     },
-                    {
-                      bold: "DeltaMax",
-                      light: "— Trusted Data Intelligence",
-                    },
-                    {
-                      bold: "PMO-Max",
-                      light: "— Risk Controls & Compliance",
-                    },
+                    { bold: "DeltaMax", light: "— Trusted Data Intelligence" },
+                    { bold: "PMO-Max", light: "— Risk Controls & Compliance" },
                     {
                       bold: "Change Management & Human Capital Enablement",
                       light: "",
@@ -508,20 +482,17 @@ export default function KatalystStreetDemo() {
                       bold: "OptiMax",
                       light: "— Operationalize at Enterprise Scale",
                     },
-                    {
-                      bold: "Agentic Enterprise Framework",
-                      light: "",
-                    },
-                  ].map((solution, index) => (
-                    <li key={index} className="flex items-start gap-2 sm:gap-3">
+                    { bold: "Agentic Enterprise Framework", light: "" },
+                  ].map((solution, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 sm:gap-3 w-full"
+                    >
                       <span className="mt-1 sm:mt-1.5 h-1 sm:h-1.5 w-1 sm:w-1.5 rounded-full bg-black flex-shrink-0" />
-                      <div>
+                      <div className="break-words">
                         <span className="font-bold">{solution.bold}</span>
                         {solution.light && (
-                          <span className="text-black font-light">
-                            {" "}
-                            {solution.light}
-                          </span>
+                          <span className="font-light"> {solution.light}</span>
                         )}
                       </div>
                     </li>
@@ -540,39 +511,33 @@ export default function KatalystStreetDemo() {
         <TeamSection />
         <ContactSection />
 
-        {/* Global Footer Elements */}
-        <footer className="pt-12 md:pt-24 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-start gap-8 sm:gap-6 text-xs text-zinc-600 tracking-wider">
-          {/* Left Block: Logo, Subtitle, Address, and Copyright */}
+        {/* Footer */}
+        <footer className="pt-12 md:pt-24 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-start gap-8 sm:gap-6 text-xs text-zinc-600 tracking-wider w-full overflow-hidden">
           <div className="flex flex-col items-start gap-3 w-full sm:w-auto">
             <div className="flex items-center justify-center select-none opacity-80 hover:opacity-100 transition-opacity">
               <Image
                 src="/logonew1.png"
                 alt="Katalyst Street Footer Logo"
-                width={70}
-                height={70}
-                className="object-contain filter invert dark w-[70px] h-[70px] md:w-[90px] md:h-[90px]"
+                width={50}
+                height={50}
+                className="object-contain filter invert dark w-[50px] h-[50px] sm:w-[70px] sm:h-[70px] md:w-[90px] md:h-[90px]"
               />
             </div>
-            <div className="font-medium text-zinc-500 max-w-sm text-xs sm:text-sm">
+            <div className="font-medium text-zinc-500 max-w-sm text-xs sm:text-sm break-words">
               Taming the AI Complexity and building AI Native Enterprises
             </div>
-
-            {/* Office Address Block */}
-            <div className="text-zinc-600 mt-1 text-[11px] sm:text-xs">
-              8000 Avalon Boulevard, Georgia, 30009
+            <div className="text-zinc-600 mt-1 text-[11px] sm:text-xs break-words">
+              Avalon Boulevard, Georgia, 30009
             </div>
-
             <div className="mt-2 text-[10px] sm:text-xs">
               © {new Date().getFullYear()} KATALYST STREET INC.
             </div>
           </div>
 
-          {/* Right Block: Mail with icon and Social Links */}
           <div className="flex flex-col items-start sm:items-end gap-3 md:gap-4 w-full sm:w-auto">
-            {/* Email Contact Trigger */}
             <a
               href="mailto:CONTACT@KATALYSTSTREET.COM"
-              className="hover:text-black transition-colors flex items-center gap-2 font-medium text-[11px] sm:text-xs"
+              className="hover:text-black transition-colors flex items-center gap-2 font-medium text-[11px] sm:text-xs break-words max-w-full"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -591,14 +556,11 @@ export default function KatalystStreetDemo() {
               </svg>
               CONTACT@KATALYSTSTREET.COM
             </a>
-
-            {/* LinkedIn Company Redirection */}
             <a
               href="https://www.linkedin.com/company/katalyst-street"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-black transition-colors flex items-center gap-2 font-medium text-[11px] sm:text-xs"
-              aria-label="LinkedIn Profile"
+              className="hover:text-black transition-colors flex items-center gap-2 font-medium text-[11px] sm:text-xs max-w-full"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

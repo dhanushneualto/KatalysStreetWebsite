@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,35 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark scroll-smooth">
-      <body>{children}</body>
+      <body>
+        {/* 
+          ✅ GA4 GTAG – Load the external script asynchronously 
+          "afterInteractive" loads after page becomes interactive
+        */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-V35CD4WFTK"
+          strategy="afterInteractive"
+        />
+
+        {/* 
+          ✅ GA4 CONFIGURATION – Inline script that runs after the external script 
+          The 'id' prevents duplication during hot-reload 
+        */}
+        <Script
+          id="ga4-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-V35CD4WFTK');
+            `,
+          }}
+        />
+
+        {children}
+      </body>
     </html>
   );
 }

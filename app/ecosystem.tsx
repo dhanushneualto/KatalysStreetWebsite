@@ -232,11 +232,11 @@ export default function EcosystemSection() {
                     <Image
                       src={partner.logoSrc}
                       alt={partner.name}
-                      width={isMobile ? 40 : 55}
-                      height={isMobile ? 40 : 55}
+                      fill
                       className={`object-contain object-left ${
                         needsDarkBackdrop ? "brightness-0 invert" : ""
                       }`}
+                      sizes="(max-width: 640px) 64px, 96px" // optional but good for performance
                     />
                   </div>
                   <div className="flex flex-col text-left">

@@ -149,6 +149,7 @@ export default function TeamSection() {
                     src={member.url}
                     alt={`${member.name} headshot visual portrait`}
                     fill
+                    sizes="56px"
                     className="object-cover"
                     priority
                   />

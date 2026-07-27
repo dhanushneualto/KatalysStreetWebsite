@@ -32,11 +32,16 @@ export default function CarouselFlat() {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
+  // FIXED: Added an isMounted state to prevent Hydration Errors
+  const [isMounted, setIsMounted] = useState(false);
+
   // Minimum swipe distance for mobile swipe detection
   const minSwipeDistance = 50;
 
   // Detect mobile device on mount and resize
   useEffect(() => {
+    setIsMounted(true); // Tell the component it is safely in the browser
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -112,12 +117,19 @@ export default function CarouselFlat() {
         return { width: "600px", height: "360px" };
       }
     }
-    return { width: "620px", height: "380px" };
+    return { width: "620px", height: "380px" }; // Server default
   };
 
-  const [dimensions, setDimensions] = useState(getCardDimensions());
+  // FIXED: Force the initial state to perfectly match the Server default (380px)
+  const [dimensions, setDimensions] = useState({
+    width: "620px",
+    height: "380px",
+  });
 
   useEffect(() => {
+    // FIXED: Immediately update the dimensions to match the real screen once mounted
+    setDimensions(getCardDimensions());
+
     const handleResize = () => {
       setDimensions(getCardDimensions());
     };
@@ -144,7 +156,7 @@ export default function CarouselFlat() {
         </button>
 
         {/* Mobile-optimized Card Container */}
-        {isMobile ? (
+        {isMounted && isMobile ? (
           // Mobile: Single card swipe view
           <div className="relative w-full flex items-center justify-center h-full px-8">
             <AnimatePresence mode="wait">
@@ -205,9 +217,9 @@ export default function CarouselFlat() {
               const isVisible = Math.abs(offsetIndex) <= 1;
               if (!isVisible) return null;
 
-              // Adjusted horizontal spacing gap for different screen sizes
+              // FIXED: Added isMounted check to prevent hydration mismatch on the X-axis transform
               const getPositionX = () => {
-                if (typeof window !== "undefined") {
+                if (isMounted && typeof window !== "undefined") {
                   if (window.innerWidth < 1024) return offsetIndex * 450;
                 }
                 return offsetIndex * 520;
@@ -302,7 +314,7 @@ export default function CarouselFlat() {
       </div>
 
       {/* Mobile swipe indicator (shown only on first visit) */}
-      {isMobile && (
+      {isMounted && isMobile && (
         <div className="text-[10px] text-zinc-400 mt-3 sm:hidden">
           ← Swipe to navigate →
         </div>
