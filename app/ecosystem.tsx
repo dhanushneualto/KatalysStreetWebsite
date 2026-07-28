@@ -63,29 +63,29 @@ export default function EcosystemSection() {
     {
       name: "Google Cloud",
       role: "AI Frontier Partner & Hyperscaler",
-      logoSrc: "/gc.png",
+      logoSrc: "/gc-new.png",
     },
     {
       name: "Anthropic",
       role: "AI Frontier Partner",
-      logoSrc: "/anthropic.png",
+      logoSrc: "/anthropic-new.png",
     },
-    { name: "Databricks", role: "Data Platform", logoSrc: "/databricks.png" },
-    { name: "Snowflake", role: "Data Platform", logoSrc: "/snowflake.png" },
+    { name: "Databricks", role: "Data Platform", logoSrc: "/databricks-new.png" },
+    { name: "Snowflake", role: "Data Platform", logoSrc: "/snowflake-new.png" },
     { name: "Tally", role: "Finance Partner", logoSrc: "/tally.png" },
-    { name: "Open AI", role: "AI Frontier Partner", logoSrc: "/openai.png" },
+    { name: "Open AI", role: "AI Frontier Partner", logoSrc: "/openai-new.png" },
   ];
 
   const executionPartners: PartnerCard[] = [
     {
       name: "AIVanta",
       role: "AI Consulting Partner",
-      logoSrc: "/aivantanew.png",
+      logoSrc: "/aivantanew-new.png",
     },
     {
       name: "NeuAlto",
       role: "AI Engineering & Managed Services",
-      logoSrc: "/neualto.png",
+      logoSrc: "/neualto-new.png",
     },
     {
       name: "Datadvise",
@@ -95,7 +95,7 @@ export default function EcosystemSection() {
     {
       name: "Origins.AI",
       role: "AI Product & Engineering",
-      logoSrc: "/origins.png",
+      logoSrc: "/origins-new.png",
     },
     {
       name: "Neuroagent.AI",
@@ -213,17 +213,18 @@ export default function EcosystemSection() {
             variants={marqueeVariants(direction)}
             animate="animate"
           >
-            {duplicatedItems.map((partner, idx) => {
-              const needsDarkBackdrop = partner.isWhiteLogo; // 👈 check flag
+           {duplicatedItems.map((partner, idx) => {
+              const needsDarkBackdrop = partner.isWhiteLogo;
 
               return (
                 <div
                   key={idx}
-                  className="flex items-center gap-3 sm:gap-4 select-none flex-shrink-0 w-[220px] sm:w-[280px]"
+                  // FIXED: Tightened the gap from gap-4 down to gap-2/gap-3
+                  className="flex items-center gap-2 sm:gap-3 select-none flex-shrink-0 w-[220px] sm:w-[260px]"
                 >
-                  {/* Logo container with conditional dark background */}
+                  {/* FIXED: Shrunk the massive 96px width down to 56px (w-14) to eliminate dead space */}
                   <div
-                    className={`w-16 sm:w-24 h-8 sm:h-10 relative flex-shrink-0 flex items-center justify-center rounded-lg ${
+                    className={`w-10 sm:w-14 h-10 sm:h-12 relative flex-shrink-0 flex items-center justify-center rounded-lg ${
                       needsDarkBackdrop
                         ? "bg-zinc-800 dark:bg-zinc-950"
                         : "bg-transparent"
@@ -233,10 +234,11 @@ export default function EcosystemSection() {
                       src={partner.logoSrc}
                       alt={partner.name}
                       fill
-                      className={`object-contain object-left ${
+                      // FIXED: Swapped object-left to object-center so images sit perfectly balanced next to the text
+                      className={`object-contain object-center ${
                         needsDarkBackdrop ? "brightness-0 invert" : ""
                       }`}
-                      sizes="(max-width: 640px) 64px, 96px" // optional but good for performance
+                      sizes="(max-width: 640px) 40px, 56px" 
                     />
                   </div>
                   <div className="flex flex-col text-left">

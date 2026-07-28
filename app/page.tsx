@@ -21,6 +21,7 @@ export default function KatalystStreetDemo() {
   const tabs = ["STRATEGY", "FOUNDATIONS", "BUILD", "SCALE", "OPTIMIZE"];
   const [activeTab, setActiveTab] = useState("BUILD");
   const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   // Detect mobile for performance
   useEffect(() => {
@@ -74,6 +75,41 @@ export default function KatalystStreetDemo() {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+  // Active Section ScrollSpy Logic
+  useEffect(() => {
+    // A 100ms delay guarantees all child components have physically painted their IDs into the DOM before we look for them
+    const observerTimer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target.id);
+            }
+          });
+        },
+        { 
+          // Loosened the margins. Now even shorter sections will reliably trigger the highlight.
+          rootMargin: "-20% 0px -40% 0px" 
+        }
+      );
+
+      // Hardcoding the target IDs here makes this block 100% self-contained
+      const targetIds = [
+        "journey", "platforms", "ecosystem", "industries", "insights", "team", "contact"
+      ];
+      
+      targetIds.forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+          observer.observe(element);
+        }
+      });
+
+      return () => observer.disconnect();
+    }, 100);
+
+    return () => clearTimeout(observerTimer);
+  }, []);
 
   // -------- SMOOTH SCROLL ANIMATIONS --------
   const { scrollYProgress } = useScroll({
@@ -96,8 +132,8 @@ export default function KatalystStreetDemo() {
 
   const portalOpacity = useTransform(
     smoothProgress,
-    [0, 0.03, 0.06],
-    isMobile ? [1, 0.7, 0] : [1, 0.5, 0],
+    [0, 0.02, 0.05],
+    isMobile ? [1, 0, 0] : [1, 1, 1],
   );
 
   const bgTransition = useTransform(
@@ -111,7 +147,11 @@ export default function KatalystStreetDemo() {
     [0, 0.04, 0.06],
     ["#ffffff", "#e4e4e7", "#f4f4f5"],
   );
-
+const subtitleTextTransition = useTransform(
+    smoothProgress,
+    [0, 0.04, 0.06],
+    ["#71717a", "#e4e4e7", "#f4f4f5"], 
+  );
   const textTransition = useTransform(
     smoothProgress,
     [0.06, 0.06],
@@ -203,6 +243,8 @@ export default function KatalystStreetDemo() {
       className="min-h-[250vh] w-full max-w-[100vw] font-sans antialiased select-none transition-colors duration-200 relative overflow-clip"
     >
       {/* Navigation */}
+      {/* Navigation */}
+    {/* Navigation */}
       <motion.nav
         style={{ borderColor: navBorder }}
         className={`fixed top-0 left-0 w-full z-50 px-4 md:px-6 py-3 md:py-4 flex justify-between items-center transition-all duration-500 ease-in-out ${
@@ -211,14 +253,17 @@ export default function KatalystStreetDemo() {
             : "bg-transparent border-b border-zinc-100/80 text-white"
         }`}
       >
-        <div className="flex items-center gap-2">
+        {/* LEFT: Logo Area */}
+        {/* FIXED: Changed z-20 to z-50 relative so it sits on top of the mobile menu */}
+        <div className="relative flex items-center gap-2 z-50">
           <Image
             src="/logonew1.png"
             alt="Katalyst Street Logo"
             width={isMobileMenuOpen ? 60 : 70}
             height={isMobileMenuOpen ? 60 : 70}
             className={`object-contain transition-all duration-500 ${
-              isScrolledPastThreshold
+              // FIXED: Force the logo to be dark if the mobile menu is open, so it doesn't vanish on the white background
+              isScrolledPastThreshold || isMobileMenuOpen
                 ? "filter brightness-0 grayscale contrast-200"
                 : "filter brightness-0 invert"
             } w-[50px] h-[50px] sm:w-[80px] sm:h-[80px] md:w-[120px] md:h-[120px]`}
@@ -226,30 +271,68 @@ export default function KatalystStreetDemo() {
           />
         </div>
 
-        <div className="hidden lg:flex gap-6 xl:gap-8 text-sm font-medium">
-          {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className={linkStyles}>
-              {link.label}
-            </a>
-          ))}
+        {/* CENTER: Absolute-Centered Navigation Links (Desktop Only) */}
+        <div className="hidden lg:flex gap-6 xl:gap-8 text-sm items-center absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-auto justify-center">
+          {navLinks
+            .filter((link) => link.href !== "#contact")
+            .map((link) => {
+              const targetId = link.href.substring(1);
+              const isActive = activeSection === targetId;
+
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`inline-block transition-all duration-300 ease-in-out origin-center ${
+                    isActive
+                      ? isScrolledPastThreshold
+                        ? "text-black font-black scale-125 drop-shadow-md"
+                        : "text-white font-black scale-125 drop-shadow-md"
+                      : isScrolledPastThreshold
+                      ? "text-zinc-600 hover:text-black font-medium scale-100"
+                      : "text-zinc-300 hover:text-white font-medium scale-100"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
         </div>
 
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden relative z-50 p-2 touch-manipulation"
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? (
-            <X
-              className={`w-6 h-6 ${isScrolledPastThreshold ? "text-black" : "text-white"}`}
-            />
-          ) : (
-            <Menu
-              className={`w-6 h-6 ${isScrolledPastThreshold ? "text-black" : "text-white"}`}
-            />
-          )}
-        </button>
+        {/* RIGHT: Call to Action Button & Mobile Menu Toggle */}
+        {/* FIXED: Changed z-20 to z-50 relative so the button sits on top of the mobile menu */}
+        <div className="relative flex items-center justify-end gap-4 z-50">
+          {/* Premium Desktop "Get In Touch" Button */}
+          <a
+            href="#contact"
+            className={`hidden lg:flex items-center justify-center px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95 ${
+              isScrolledPastThreshold
+                ? "bg-black text-white hover:bg-zinc-800 shadow-md"
+                : "bg-white text-black hover:bg-zinc-200 shadow-lg"
+            }`}
+          >
+            Get In Touch
+          </a>
 
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden relative p-2 touch-manipulation"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              // FIXED: The X icon is now strictly black, ensuring it is visible against the white mobile menu
+              <X className="w-6 h-6 text-black" />
+            ) : (
+              <Menu
+                className={`w-6 h-6 ${
+                  isScrolledPastThreshold ? "text-black" : "text-white"
+                }`}
+              />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -266,7 +349,11 @@ export default function KatalystStreetDemo() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-2xl font-bold text-black hover:text-zinc-600 transition-colors"
+                className={`text-2xl font-bold transition-colors ${
+                  link.href === "#contact"
+                    ? "text-white bg-black px-8 py-3 rounded-full mt-4" 
+                    : "text-black hover:text-zinc-600"
+                }`}
               >
                 {link.label}
               </motion.a>
@@ -291,15 +378,18 @@ export default function KatalystStreetDemo() {
           >
             KATALYST STREET
           </motion.h1>
-          <p className="text-[10px] sm:text-sm md:text-base font-semibold tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.4em] text-zinc-500 uppercase mt-4">
+          <motion.p 
+            style={{ color: subtitleTextTransition }}
+            className="text-[10px] sm:text-sm md:text-base font-semibold tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.4em] uppercase mt-4"
+          >
             The Enterprise AI Transformation Company
-          </p>
+          </motion.p>
         </motion.div>
 
         <div className="absolute right-4 sm:right-6 bottom-4 sm:bottom-6 w-20 h-20 sm:w-44 sm:h-44 md:w-56 md:h-56 select-none pointer-events-none z-10">
           <div className="relative w-full h-full">
             <Image
-              src="/beast.png"
+              src="/newbeastai.png"
               alt="Tame The Beast AI Emblem"
               fill
               sizes="(max-width: 640px) 80px, (max-width: 768px) 176px, 224px"
@@ -320,7 +410,7 @@ export default function KatalystStreetDemo() {
           y: contentYOffset,
         }}
         // FIXED: Removed willChange: "transform" from inline styles, keeping only hardware-friendly offset
-        className="relative z-20 w-full md:max-w-6xl mx-auto px-4 sm:px-8 md:px-24 pb-16 md:pb-32 space-y-16 md:space-y-48"
+        className="relative z-20 w-full md:max-w-6xl mx-auto px-4 sm:px-8 md:px-24 pb-16 md:pb-32 space-y-12 md:space-y-20"
       >
         {/* Core Subheader Panel */}
         <section className="min-h-screen flex flex-col items-center justify-center text-center pt-16 sm:pt-24 w-full">
@@ -384,18 +474,20 @@ export default function KatalystStreetDemo() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center w-full max-w-full gap-1.5 sm:gap-3 md:gap-4 pt-4 sm:pt-6 px-1">
+            <div className="flex flex-wrap items-center justify-center w-full max-w-full gap-1.5 sm:gap-3 md:gap-4 pt-4 sm:pt-6 px-1 ">
               {[
-                "Schedule Executive Briefing",
-                "Take AI Readiness Assessment",
-                "Read AI Governance White Paper",
+                { label: "Schedule Executive Briefing", href: "#contact" },
+                { label: "Take AI Readiness Assessment", href: "#contact" },
+                // Left as "#" for now until you have a PDF or page for the white paper!
+                { label: "Read AI Governance White Paper", href: "#" }, 
               ].map((action) => (
-                <span
-                  key={action}
-                  className="px-2 sm:px-4 md:px-5 py-1 sm:py-2 rounded-full border-2 border-black font-black text-[8px] sm:text-sm md:text-base text-black bg-transparent transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 select-none text-center max-w-full whitespace-normal sm:whitespace-nowrap touch-manipulation"
+                <a
+                  key={action.label}
+                  href={action.href}
+                  className="px-2 sm:px-4 md:px-5 py-1 sm:py-2 rounded-full border-2 border-black font-black text-[8px] sm:text-sm md:text-base text-black bg-transparent transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 select-none text-center max-w-full whitespace-normal sm:whitespace-nowrap touch-manipulation cursor-pointer inline-block"
                 >
-                  {action}
-                </span>
+                  {action.label}
+                </a>
               ))}
             </div>
 
@@ -516,7 +608,7 @@ export default function KatalystStreetDemo() {
           <div className="flex flex-col items-start gap-3 w-full sm:w-auto">
             <div className="flex items-center justify-center select-none opacity-80 hover:opacity-100 transition-opacity">
               <Image
-                src="/logonew1.png"
+                src="/kslogo.jpeg"
                 alt="Katalyst Street Footer Logo"
                 width={50}
                 height={50}
