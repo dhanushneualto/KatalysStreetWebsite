@@ -341,9 +341,9 @@ export default function JourneySection() {
               {/* Bottom Multi-Column Details Matrix */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 pt-6 sm:pt-8 border-t border-zinc-200/60 dark:border-zinc-800/60 items-start w-full">
                 {/* Column Left: Focus Fields */}
-                <div className="space-y-3 sm:space-y-4">
-                  <h5 className="text-[10px] sm:text-[11px] font-black tracking-widest text-dark uppercase flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-900 flex-shrink-0" />
+                <div className="space-y-3 sm:space-y-4 ">
+                  <h5 className="text-[10px] sm:text-[11px] font-black tracking-widest text-dark uppercase flex items-center gap-2 ">
+                    <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-900 flex-shrink-0 " />
                     {currentStageData.strategyTitle}
                   </h5>
                   <ul className="space-y-2 sm:space-y-3">

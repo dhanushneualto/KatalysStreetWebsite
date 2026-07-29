@@ -255,9 +255,9 @@ const subtitleTextTransition = useTransform(
       >
         {/* LEFT: Logo Area */}
         {/* FIXED: Changed z-20 to z-50 relative so it sits on top of the mobile menu */}
-        <div className="relative flex items-center gap-2 z-50">
+        <div className="relative flex items-center gap-2 z-50 ml-4 md:ml-8">
           <Image
-            src="/logonew1.png"
+            src="/kslogo-new.png"
             alt="Katalyst Street Logo"
             width={isMobileMenuOpen ? 60 : 70}
             height={isMobileMenuOpen ? 60 : 70}
@@ -266,10 +266,10 @@ const subtitleTextTransition = useTransform(
               isScrolledPastThreshold || isMobileMenuOpen
                 ? "filter brightness-0 grayscale contrast-200"
                 : "filter brightness-0 invert"
-            } w-[50px] h-[50px] sm:w-[80px] sm:h-[80px] md:w-[120px] md:h-[120px]`}
+            } w-[50px] h-[50px] sm:w-[80px] sm:h-[80px] md:w-[90px] md:h-[90px]`}
             priority
           />
-        </div>
+        </div>  
 
         {/* CENTER: Absolute-Centered Navigation Links (Desktop Only) */}
         <div className="hidden lg:flex gap-6 xl:gap-8 text-sm items-center absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-auto justify-center">
@@ -301,11 +301,11 @@ const subtitleTextTransition = useTransform(
 
         {/* RIGHT: Call to Action Button & Mobile Menu Toggle */}
         {/* FIXED: Changed z-20 to z-50 relative so the button sits on top of the mobile menu */}
-        <div className="relative flex items-center justify-end gap-4 z-50">
+        <div className="relative flex items-center justify-end gap-4 z-50 mr-4 md:mr-8">
           {/* Premium Desktop "Get In Touch" Button */}
           <a
             href="#contact"
-            className={`hidden lg:flex items-center justify-center px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95 ${
+            className={`hidden lg:flex items-center justify-center px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95  ${
               isScrolledPastThreshold
                 ? "bg-black text-white hover:bg-zinc-800 shadow-md"
                 : "bg-white text-black hover:bg-zinc-200 shadow-lg"
@@ -608,7 +608,7 @@ const subtitleTextTransition = useTransform(
           <div className="flex flex-col items-start gap-3 w-full sm:w-auto">
             <div className="flex items-center justify-center select-none opacity-80 hover:opacity-100 transition-opacity">
               <Image
-                src="/kslogo.jpeg"
+                src="/kslogo-new.png"
                 alt="Katalyst Street Footer Logo"
                 width={50}
                 height={50}
