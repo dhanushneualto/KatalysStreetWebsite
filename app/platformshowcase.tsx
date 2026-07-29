@@ -304,7 +304,7 @@ export default function PlatformShowcase() {
                       key={text}
                       className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-zinc-100/30 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-900 rounded-xl"
                     >
-                      <div className="w-4 h-4 rounded border border-zinc-300 dark:border-zinc-700 flex items-center justify-center text-zinc-400 dark:text-zinc-900 flex-shrink-0 select-none">
+                      <div className="w-4 h-4 flex items-center justify-center text-zinc-400 dark:text-zinc-900 flex-shrink-0 select-none">
                         <span className="text-[10px] font-bold">✓</span>
                       </div>
                       <span className="text-[11px] sm:text-xs font-medium text-zinc-800 dark:text-zinc-900 leading-tight">

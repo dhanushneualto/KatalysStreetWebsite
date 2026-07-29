@@ -373,8 +373,8 @@ export default function JourneySection() {
                         key={idx}
                         className="text-xs md:text-sm font-semibold text-zinc-700 dark:text-zinc-900 flex items-start gap-2"
                       >
-                        <span className="text-zinc-400 dark:text-zinc-600 font-mono text-xs select-none flex-shrink-0 mt-0.5">
-                          ↳
+                        <span className="text-black font-mono text-xs select-none flex-shrink-0 mt-0.5">
+                           →
                         </span>
                         <span>{item}</span>
                       </li>
