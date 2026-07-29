@@ -242,8 +242,8 @@ const subtitleTextTransition = useTransform(
       // FIXED: Removed will-change-transform to stop mobile GPU lockup
       className="min-h-[250vh] w-full max-w-[100vw] font-sans antialiased select-none transition-colors duration-200 relative overflow-clip"
     >
-      {/* Navigation */}
-      {/* Navigation */}
+    
+      
     {/* Navigation */}
       <motion.nav
         style={{ borderColor: navBorder }}
@@ -399,9 +399,7 @@ const subtitleTextTransition = useTransform(
           </div>
         </div>
 
-        <div className="absolute bottom-6 sm:bottom-8 left-4 sm:left-8 w-6 h-6 sm:w-8 sm:h-8 border border-zinc-800 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold text-zinc-400 select-none pointer-events-none">
-          N
-        </div>
+       
       </div>
 
       {/* Main Content */}
