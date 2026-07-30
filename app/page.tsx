@@ -18,6 +18,10 @@ export default function KatalystStreetDemo() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // NEW: States for the scroll arrows
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
   const tabs = ["STRATEGY", "FOUNDATIONS", "BUILD", "SCALE", "OPTIMIZE"];
   const [activeTab, setActiveTab] = useState("BUILD");
   const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
@@ -40,6 +44,28 @@ export default function KatalystStreetDemo() {
       });
     }, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  // NEW: Scroll listener for both the bouncing arrow and back-to-top button
+  useEffect(() => {
+    const handleArrowScroll = () => {
+      // Fade out bouncing arrow after 1px
+      if (window.scrollY >= 1) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+
+      // Show back-to-top button after 500px
+      if (window.scrollY > 500) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleArrowScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleArrowScroll);
   }, []);
 
   // Scroll threshold logic
@@ -75,6 +101,7 @@ export default function KatalystStreetDemo() {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+
   // Active Section ScrollSpy Logic
   useEffect(() => {
     // A 100ms delay guarantees all child components have physically painted their IDs into the DOM before we look for them
@@ -88,12 +115,10 @@ export default function KatalystStreetDemo() {
           });
         },
         { 
-          // Loosened the margins. Now even shorter sections will reliably trigger the highlight.
           rootMargin: "-20% 0px -40% 0px" 
         }
       );
 
-      // Hardcoding the target IDs here makes this block 100% self-contained
       const targetIds = [
         "journey", "platforms", "ecosystem", "industries", "insights", "team", "contact"
       ];
@@ -147,11 +172,13 @@ export default function KatalystStreetDemo() {
     [0, 0.04, 0.06],
     ["#ffffff", "#e4e4e7", "#f4f4f5"],
   );
-const subtitleTextTransition = useTransform(
+  
+  const subtitleTextTransition = useTransform(
     smoothProgress,
     [0, 0.04, 0.06],
     ["#71717a", "#e4e4e7", "#f4f4f5"], 
   );
+  
   const textTransition = useTransform(
     smoothProgress,
     [0.06, 0.06],
@@ -235,14 +262,17 @@ const subtitleTextTransition = useTransform(
     });
   }, [activeTab, tabs]);
 
+  // NEW: Smooth scroll function for the back-to-top button
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <motion.div
       ref={containerRef}
       style={{ backgroundColor: bgTransition, color: textTransition }}
-      // FIXED: Removed will-change-transform to stop mobile GPU lockup
       className="min-h-[250vh] w-full max-w-[100vw] font-sans antialiased select-none transition-colors duration-200 relative overflow-clip"
     >
-    
       
     {/* Navigation */}
       <motion.nav
@@ -254,7 +284,6 @@ const subtitleTextTransition = useTransform(
         }`}
       >
         {/* LEFT: Logo Area */}
-        {/* FIXED: Changed z-20 to z-50 relative so it sits on top of the mobile menu */}
         <div className="relative flex items-center gap-2 z-50 ml-4 md:ml-8">
           <Image
             src="/kslogo-new.png"
@@ -262,7 +291,6 @@ const subtitleTextTransition = useTransform(
             width={isMobileMenuOpen ? 60 : 70}
             height={isMobileMenuOpen ? 60 : 70}
             className={`object-contain transition-all duration-500 ${
-              // FIXED: Force the logo to be dark if the mobile menu is open, so it doesn't vanish on the white background
               isScrolledPastThreshold || isMobileMenuOpen
                 ? "filter brightness-0 grayscale contrast-200"
                 : "filter brightness-0 invert"
@@ -300,7 +328,6 @@ const subtitleTextTransition = useTransform(
         </div>
 
         {/* RIGHT: Call to Action Button & Mobile Menu Toggle */}
-        {/* FIXED: Changed z-20 to z-50 relative so the button sits on top of the mobile menu */}
         <div className="relative flex items-center justify-end gap-4 z-50 mr-4 md:mr-8">
           {/* Premium Desktop "Get In Touch" Button */}
           <a
@@ -320,7 +347,6 @@ const subtitleTextTransition = useTransform(
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              // FIXED: The X icon is now strictly black, ensuring it is visible against the white mobile menu
               <X className="w-6 h-6 text-black" />
             ) : (
               <Menu
@@ -398,8 +424,19 @@ const subtitleTextTransition = useTransform(
             />
           </div>
         </div>
-
-       
+        
+        {/* NEW: Bouncing Scroll Down Arrow */}
+        <a
+          
+          className={`absolute bottom-[50px] left-1/2 transform -translate-x-1/2 w-[20px] h-[20px] bg-contain bg-no-repeat bg-center animate-bounce transition-all duration-1000 ease-out z-20 pointer-events-auto invert ${
+            hasScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+          style={{
+            backgroundImage:
+              "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAMAAADDpiTIAAAAMFBMVEX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAv3aB7AAAAD3RSTlMAGNe9CgcGtbOytLe2f5VrjfCKAAADsElEQVR4AezBgQAAAACAoP2pF6kCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIDZpRvTiIEYiMLkzivb65/Xf7eBLSFkYAQzDUjwvS6rZ3N9LduekvuffFOAq/+Xs+T+pABffzhL7p8CfP3FBdQB3gXEH45S+psXEP9VgM7fvoD4rwJ0/v4FxF9TQE1IAT38YZbcPwV4+YsLGBNSQB9/mONf/XdIAZ38YR9y/xTg678KkPunAF//VYDcPwU4+IsLGDekgI7+cA+5fwow8hcUsPxTgLG/uIBxQQro6w/XEPinABd/bQHLPwUY+6sLeCEFdPeH989Hfj4poL//55ddOqgCAIQBKKT9S5vB294+GeAeA/gbwN8A/gbwN4C/AfwN4G8AfwP4G8DfAP4G8DeAvwH8DeBvAH8D+BvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gbM9DeAvwH8DeBvAH8D+BvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gbwN4C/AfwN4G8AfwP4G8DfAP4G8DeAvwH8DeBvAH8D+BvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gbwN4C/AfwN4G8AfwP4G8DfAP4G8DeAvwH8DeBvAP//AfwN4G8AfwP4G8DfAP4G8DeAvwH8DeBvAH8D+BvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gbwN4C/AfwN4G8AfwP4G8DfAP4G8DeAvwH8DeBvAH8D+BvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gbwN4C/AfwN4G8AfwPm+hvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gbwN4C/AfwN4G8AfwP4G8DfAP4G8DeAvwH8DeBvAH8D+BvA34Bd/gbwN4C/AfwN4G8AfwP4G8DfAP4G8DeAvwH8DeBvQMXfAP4G8DeAvwH8DeBvQNPfAP4G8Deg7G8AfwPa/gbE/Q2I+xvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gYs8DeAvwH8DeBvAH8D+BvA3wD+BvA3gL8B/A3gbwB/A/gbwN8A/gbs9zeAvwH8DeBvAH8D+BvA3wD+BvT8DeBvAH8D+BvQ9TeAvwFtfwPi/gbwf+3BsQAAAADAIH/rYeypAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOAUHBYk13Z7LTsAAAAASUVORK5CYII=')",
+          }}
+          aria-label="Scroll down"
+        />
       </div>
 
       {/* Main Content */}
@@ -407,7 +444,6 @@ const subtitleTextTransition = useTransform(
         style={{
           y: contentYOffset,
         }}
-        // FIXED: Removed willChange: "transform" from inline styles, keeping only hardware-friendly offset
         className="relative z-20 w-full md:max-w-6xl mx-auto px-4 sm:px-8 md:px-24 pb-16 md:pb-32 space-y-12 md:space-y-20"
       >
         {/* Core Subheader Panel */}
@@ -476,7 +512,6 @@ const subtitleTextTransition = useTransform(
               {[
                 { label: "Schedule Executive Briefing", href: "#contact" },
                 { label: "Take AI Readiness Assessment", href: "#contact" },
-                // Left as "#" for now until you have a PDF or page for the white paper!
                 { label: "Read AI Governance White Paper", href: "#" }, 
               ].map((action) => (
                 <a
@@ -673,6 +708,21 @@ const subtitleTextTransition = useTransform(
           </div>
         </footer>
       </motion.div>
+
+      {/* NEW: Floating Back to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[100] bg-black dark:bg-white text-white dark:text-black w-12 h-12 md:w-14 md:h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer ${
+          showBackToTop
+            ? "opacity-100 pointer-events-auto translate-y-0"
+            : "opacity-0 pointer-events-none translate-y-4"
+        }`}
+        aria-label="Back to top"
+      >
+        <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </button>
     </motion.div>
   );
 }
