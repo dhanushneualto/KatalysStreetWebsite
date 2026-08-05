@@ -319,11 +319,14 @@ export default function PlatformShowcase() {
             {/* ⚡ Action Operations CTAs Bar */}
             <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-zinc-200/30 dark:border-zinc-800/30">
               <button
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
                 className={`px-5 py-2.5 sm:py-2.5 rounded-xl border font-bold text-[10px] sm:text-[11px] text-center transition-all outline-none w-full sm:w-auto ${currentData.ctaLearnMoreBorder}`}
               >
                 Learn More
               </button>
               <button
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              
                 className={`px-5 py-2.5 sm:py-2.5 rounded-xl font-bold text-[10px] sm:text-[11px] text-center transition-all outline-none shadow-sm w-full sm:w-auto ${currentData.ctaBg}`}
               >
                 Request Demo
