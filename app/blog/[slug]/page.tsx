@@ -67,7 +67,8 @@ const renderWixRichContent = (nodes: any[]) => {
 export default function SingleBlogPost() {
   // ⚡ Safely extract the slug from the URL
   const params = useParams(); 
-  const slug = params?.slug as string;
+ const rawSlug = params?.slug as string;
+ const slug = rawSlug ? decodeURIComponent(rawSlug) : "";
 
   const [post, setPost] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
