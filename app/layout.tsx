@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import SmoothScroll from "./smoothscroll";
 
 export const metadata: Metadata = {
   title: "Katalyst Street",
@@ -13,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark " >
       <body>
         {/* 
           ✅ GA4 GTAG – Load the external script asynchronously 
@@ -40,7 +41,7 @@ export default function RootLayout({
             `,
           }}
         />
-
+         <SmoothScroll />
         {children}
       </body>
     </html>

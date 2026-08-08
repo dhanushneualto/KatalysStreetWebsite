@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 interface WhitePaper {
   tag?: string;
@@ -9,7 +10,8 @@ interface WhitePaper {
   readTime: string;
   title: string;
   desc: string;
-  url?: string; // ⚡ Added optional link path property mapping field
+  url?: string;
+  slug: string;
 }
 
 interface BlogNote {
@@ -17,6 +19,7 @@ interface BlogNote {
   title: string;
   sub?: string;
   url?: string;
+  slug: string; // ⚡ Added slug property mapping field
 }
 
 export default function InsightsSection() {
@@ -24,11 +27,12 @@ export default function InsightsSection() {
 
   const whitePapers: WhitePaper[] = [
     {
-      date: "May 29, 2026",
-      readTime: "12 Min Read",
+      date: "July, 2026",
+      readTime: "5 Min Read",
       title:
-        "The PID (Project Initiation Document) Is the Most Important Artifact in Building New Agentic Enterprise Workflows",
-      desc: "Katalyst Street makes the case for Governance-as-Code (GaaC) at the point of project initiation — and, consequently, the 'control plane' of trustworthy enterprise-grade agentic workflows.",
+        "Modernizing the Payment Stack with Production-Grade AI",
+      desc: "For decades, digital payment infrastructure operated on deterministic, rigid logic: hardcoded routing tables, static fraud rules, and manual dispute resolution workflows. ",
+      slug: "case-study-modernizing-the-payment-stack-with-production-grade-ai",
     },
     {
       tag: "Featured · C-Suite Playbook",
@@ -37,7 +41,7 @@ export default function InsightsSection() {
       title:
         "From Shadow AI to Agentic Intelligence: The C-Suite Playbook for 2026",
       desc: "A practical governance roadmap for boards and executives confronting unsanctioned AI usage across their organizations.",
-      url: "https://www.katalyststreet.com/post/from-shadow-ai-to-agentic-intelligence-the-c-suite-playbook-for-2026", // ⚡ Added click redirection path link destination
+      slug: "from-shadow-ai-to-agentic-intelligence-the-c-suite-playbook-for-2026",
     },
     {
       tag: "OptiMax · Executive Playbook",
@@ -46,7 +50,7 @@ export default function InsightsSection() {
       title:
         "The Executive Playbook: Transforming Marketing from a Cost Center to an AI-Driven Profitability Engine",
       desc: "How AI-native revenue intelligence repositions marketing as a measurable profit driver.",
-      url: "https://www.katalyststreet.com/post/the-executive-playbook-transforming-marketing-from-a-cost-center-to-an-ai-driven-profitability-engi",
+      slug: "the-executive-playbook-transforming-marketing-from-a-cost-center-to-an-ai-driven-profitability-engi",
     },
     {
       tag: "OptiMax · Digital Strategy",
@@ -55,7 +59,7 @@ export default function InsightsSection() {
       title:
         "How Can Data and AI Transform Marketing Organizations in the Digital Age?",
       desc: "A framework for modernizing marketing operations with data and AI at the core.",
-      url: "https://www.katalyststreet.com/post/how-can-data-and-ai-transform-marketing-organizations-in-the-digital-age",
+      slug: "how-can-data-and-ai-transform-marketing-organizations-in-the-digital-age",
     },
     {
       tag: "DeltaMax · Data Trust",
@@ -64,7 +68,7 @@ export default function InsightsSection() {
       title:
         "Is Your Data Pipeline a Black Box? How DeltaMax Illuminates Your Data Quality",
       desc: "Why 'unknown unknowns' in enterprise pipelines are the real threat to AI investment — and how proactive monitoring changes the equation.",
-      url: "https://www.katalyststreet.com/post/is-your-data-pipeline-a-black-box-how-deltamax-illuminates-your-data-quality",
+      slug: "is-your-data-pipeline-a-black-box-how-deltamax-illuminates-your-data-quality",
     },
   ];
 
@@ -74,38 +78,38 @@ export default function InsightsSection() {
       title:
         "The Multi-Model Imperative: Operationalizing Multi-Model AI Strategies",
       sub: "A CXO + Engineering Playbook for 2026",
-      url: "https://www.katalyststreet.com/post/the-multi-model-imperative",
+      slug: "the-multi-model-imperative",
     },
     {
       meta: "MAY 29, 2026 · 5 MIN READ",
       title: "The Executive Framework for AI-Era Program Management",
       sub: "Framework · Program Governance",
-      url: "https://www.katalyststreet.com/post/the-executive-framework-for-ai-era-program-management",
+      slug: "the-executive-framework-for-ai-era-program-management",
     },
     {
       meta: "MAY 28, 2026 · 5 MIN READ",
       title:
         "The Rise of the Architectural CEO: Moving Past the AI Hype into Structural Reinvention",
       sub: "Leadership · Strategy",
-      url: "https://www.katalyststreet.com/post/the-rise-of-the-architectural-ceo-moving-past-the-ai-hype-into-structural-reinvention",
+      slug: "the-rise-of-the-architectural-ceo-moving-past-the-ai-hype-into-structural-reinvention",
     },
     {
       meta: "TREND WATCH",
       title: "The Rise of Strategic Human Capital",
       sub: "Human Capital · AI",
-      url: "https://www.katalyststreet.com/post/trend-watch-the-rise-of-strategic-human-capital",
+      slug: "trend-watch-the-rise-of-strategic-human-capital",
     },
     {
       meta: "CASE STUDY",
       title: "Operationalizing Open Models in the Enterprise",
       sub: "LLM Strategy",
-      url: "https://www.katalyststreet.com/post/case-study-operationalizing-open-models-in-the-enterprise",
+      slug: "case-study-operationalizing-open-models-in-the-enterprise",
     },
     {
       meta: "FINANCIAL SERVICES",
       title: "Operationalizing Financial Services AI",
       sub: "Industry Playbook",
-      url: "https://www.katalyststreet.com/post/operationalizing-financial-services-ai",
+      slug: "operationalizing-financial-services-ai",
     },
   ];
 
@@ -197,15 +201,13 @@ export default function InsightsSection() {
               </button>
             </div>
 
-            {/* ⚡ UPDATED: Dynamically changes target destination anchor path link depending on slide status */}
-            <a
-              href={whitePapers[currentSlide].url || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* ⚡ UPDATED: Changed from standard <a> to Next.js <Link> for internal routing via slugs */}
+            <Link
+              href={`/blog/${whitePapers[currentSlide].slug}`}
               className="text-xs font-bold text-zinc-900 cursor-pointer hover:underline uppercase tracking-wider"
             >
               Read White Paper →
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -216,23 +218,20 @@ export default function InsightsSection() {
           <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black  uppercase leading-none">
             Blogs & Strategy Notes
           </h3>
-          <a
-            href="https://www.katalyststreet.com/blog"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/blog"
             className="text-xs font-bold text-zinc-900 cursor-pointer hover:underline uppercase tracking-wider whitespace-nowrap"
           >
             View All Strategic Insights →
-          </a>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full items-stretch cursor-pointer">
           {blogNotes.map((note, idx) => (
-            <a
+            
+            <Link
               key={idx}
-              href={note.url || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/blog/${note.slug}`}
               className="bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-2xl p-6 flex flex-col justify-between space-y-4 transition-shadow hover:shadow-md"
             >
               <div className="space-y-2 ">
@@ -248,7 +247,7 @@ export default function InsightsSection() {
                   {note.sub}
                 </span>
               )}
-            </a>
+            </Link>
           ))}
         </div>
       </div>
