@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { createClient, OAuthStrategy, media } from "@wix/sdk";
 import { posts } from "@wix/blog";
 import { notFound } from "next/navigation";
-
+export const dynamic = "force-dynamic";
 const wixClient = createClient({
   modules: { posts },
   auth: OAuthStrategy({
