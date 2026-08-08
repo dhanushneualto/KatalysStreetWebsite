@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { createClient, OAuthStrategy, media } from "@wix/sdk";
 import { posts } from "@wix/blog";
-import { notFound } from "next/navigation";
-export const dynamic = "force-dynamic";
+
 const wixClient = createClient({
   modules: { posts },
   auth: OAuthStrategy({
     clientId: "4fe783ed-517a-45c5-bd3d-f8f26ce0792b",
   }),
 });
+
 // This function reads the Wix nodes and converts them to React HTML
 const renderWixRichContent = (nodes: any[]) => {
   if (!nodes) return null;
@@ -65,17 +65,21 @@ const renderWixRichContent = (nodes: any[]) => {
 };
 
 export default function SingleBlogPost() {
-  const params = useParams(); // This grabs the URL slug
+  // ⚡ Safely extract the slug from the URL
+  const params = useParams(); 
+  const slug = params?.slug as string;
+
   const [post, setPost] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // ⚡ Wait until the slug is fully ready in production before fetching
+    if (!slug) return;
+
     async function fetchSinglePost() {
-      if (!params.slug) return;
-      
       try {
         // Fetch individual blog post using Get Post By Slug and explicitly ask for full rich content data
-        const response = await wixClient.posts.getPostBySlug(params.slug as string, { 
+        const response = await wixClient.posts.getPostBySlug(slug, { 
           fieldsets: ['RICH_CONTENT'] 
         });
         
@@ -90,9 +94,9 @@ export default function SingleBlogPost() {
     }
 
     fetchSinglePost();
-  }, [params.slug]);
+  }, [slug]); // ⚡ Ensure the effect is listening to our safe 'slug' variable
 
-if (isLoading) {
+  if (isLoading) {
     return (
       <main className="min-h-screen bg-white text-black pt-32 pb-24 px-6">
         <div className="max-w-4xl mx-auto animate-pulse">
@@ -129,13 +133,15 @@ if (isLoading) {
       </main>
     );
   }
-if (!post) {
-    notFound(); //  This instantly redirects them to your custom not-found.tsx page!
+
+  if (!post) {
+    notFound(); // This instantly redirects them to your custom not-found.tsx page!
   }
 
   console.log("WIX POST DATA:", post);
   const rawImageUrl = post.coverMedia?.image || post.media?.wixMedia?.image;
   const finalCoverImage = rawImageUrl ? media.getImageUrl(rawImageUrl).url : "";
+  
   return (
     <main className="min-h-screen bg-white text-black pt-32 pb-24 px-6">
       <article className="max-w-3xl mx-auto">
