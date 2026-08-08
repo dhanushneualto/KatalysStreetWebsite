@@ -68,21 +68,17 @@ export default function SingleBlogPost() {
 
     async function fetchSinglePost() {
       try {
-        // 1. Try fetching by the slug as normal
-        let response = await wixClient.posts.getPostBySlug(slug);
-        // 2. If no post found, try to find it by querying the whole list (The Slug Detective)
-        if (!response.post) {
-          const allPosts = await wixClient.posts.queryPosts().find();
-          const foundPost = allPosts.items.find(
-            (p: any) => p.slug === slug || p.slug === decodeURIComponent(slug)
-          );
-          if (foundPost) {
-             response = { post: foundPost };
-          }
-        }
-        
-        if (response.post) {
-          setPost(response.post);
+        // Query the post list directly with RICH_CONTENT fieldset included
+        const allPostsResponse = await (wixClient.posts.queryPosts({ 
+          fieldsets: ['RICH_CONTENT'] 
+        } as any) as any).find();
+
+        const foundPost = allPostsResponse.items.find(
+          (p: any) => p.slug === slug || p.slug === decodeURIComponent(slug)
+        );
+
+        if (foundPost) {
+          setPost(foundPost);
         }
       } catch (error) {
         console.error("Error fetching single post:", error);
@@ -101,16 +97,11 @@ export default function SingleBlogPost() {
           <div className="w-24 h-4 bg-zinc-200 rounded mb-12"></div>
           <div className="h-10 md:h-16 bg-zinc-200 rounded w-4/5 mb-4"></div>
           <div className="h-10 md:h-16 bg-zinc-200 rounded w-2/3 mb-10"></div>
-          <div className="flex gap-4 mb-10">
-            <div className="w-32 h-4 bg-zinc-200 rounded"></div>
-            <div className="w-24 h-4 bg-zinc-200 rounded"></div>
-          </div>
           <div className="w-full h-[400px] md:h-[600px] bg-zinc-200/80 rounded-2xl mb-12 shadow-sm"></div>
           <div className="space-y-4">
             <div className="h-4 bg-zinc-200 rounded w-full"></div>
             <div className="h-4 bg-zinc-200 rounded w-full"></div>
             <div className="h-4 bg-zinc-200 rounded w-11/12"></div>
-            <div className="h-4 bg-zinc-200 rounded w-full pt-6"></div>
           </div>
         </div>
       </main>
@@ -132,6 +123,7 @@ export default function SingleBlogPost() {
         </h1>
         
         {finalCoverImage && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img 
               src={finalCoverImage as string} 
               alt={post.title || "Blog cover image"} 
