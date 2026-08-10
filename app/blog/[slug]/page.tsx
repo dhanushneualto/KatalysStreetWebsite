@@ -11,6 +11,19 @@ const wixClient = createClient({
     clientId: "4fe783ed-517a-45c5-bd3d-f8f26ce0792b",
   }),
 });
+const calculateReadTime = (post: any) => {
+  const extractText = (nodes: any[]): string => {
+    if (!nodes) return "";
+    return nodes.map(node => {
+      if (node.textData?.text) return node.textData.text;
+      if (node.nodes) return extractText(node.nodes);
+      return "";
+    }).join(" ");
+  };
+
+  const wordCount = extractText(post.richContent?.nodes || []).trim().split(/\s+/).length;
+  return `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+};
 
 const renderWixRichContent = (nodes: any[]) => {
   if (!nodes) return null;
@@ -158,6 +171,27 @@ export default function SingleBlogPost() {
         <h1 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
           {post.title}
         </h1>
+       {/* AUTHOR & METADATA SECTION */}
+        <div className="mb-8 pb-6 border-b border-zinc-100">
+          <p className="font-semibold text-zinc-900">
+            {post.authorName || "Rajesh Koppula"}
+          </p>
+          
+          {post.firstPublishedDate && (
+  <p className="text-sm text-zinc-500 mt-1">
+    {(() => {
+      const d = new Date(post.firstPublishedDate);
+      // Fallback to UTC methods to extract the exact day stored
+      const month = d.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
+      const day = d.getUTCDate();
+      const year = d.getUTCFullYear();
+      return `${month} ${day}, ${year}`;
+    })()}
+  </p>
+)}
+        </div>
+        <span>{calculateReadTime(post)}</span>
+        
         
         {finalCoverImage && (
           // eslint-disable-next-line @next/next/no-img-element

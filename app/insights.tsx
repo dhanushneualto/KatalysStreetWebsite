@@ -28,7 +28,7 @@ export default function InsightsSection() {
   const whitePapers: WhitePaper[] = [
     {
       date: "July, 2026",
-      readTime: "5 Min Read",
+      readTime: "12 Min Read",
       title:
         "Modernizing the Payment Stack with Production-Grade AI",
       desc: "For decades, digital payment infrastructure operated on deterministic, rigid logic: hardcoded routing tables, static fraud rules, and manual dispute resolution workflows. ",
@@ -37,7 +37,7 @@ export default function InsightsSection() {
     {
       tag: "Featured · C-Suite Playbook",
       date: "May 20, 2026",
-      readTime: "15 Min Read",
+      readTime: "12 Min Read",
       title:
         "From Shadow AI to Agentic Intelligence: The C-Suite Playbook for 2026",
       desc: "A practical governance roadmap for boards and executives confronting unsanctioned AI usage across their organizations.",
@@ -46,7 +46,7 @@ export default function InsightsSection() {
     {
       tag: "OptiMax · Executive Playbook",
       date: "May 15, 2026",
-      readTime: "10 Min Read",
+      readTime: "5 Min Read",
       title:
         "The Executive Playbook: Transforming Marketing from a Cost Center to an AI-Driven Profitability Engine",
       desc: "How AI-native revenue intelligence repositions marketing as a measurable profit driver.",
@@ -55,7 +55,7 @@ export default function InsightsSection() {
     {
       tag: "OptiMax · Digital Strategy",
       date: "May 10, 2026",
-      readTime: "8 Min Read",
+      readTime: "5 Min Read",
       title:
         "How Can Data and AI Transform Marketing Organizations in the Digital Age?",
       desc: "A framework for modernizing marketing operations with data and AI at the core.",
@@ -64,7 +64,7 @@ export default function InsightsSection() {
     {
       tag: "DeltaMax · Data Trust",
       date: "May 04, 2026",
-      readTime: "11 Min Read",
+      readTime: "4 Min Read",
       title:
         "Is Your Data Pipeline a Black Box? How DeltaMax Illuminates Your Data Quality",
       desc: "Why 'unknown unknowns' in enterprise pipelines are the real threat to AI investment — and how proactive monitoring changes the equation.",
@@ -74,14 +74,14 @@ export default function InsightsSection() {
 
   const blogNotes: BlogNote[] = [
     {
-      meta: "JUN 2, 2026 · 5 MIN READ",
+      meta: "JUN 2, 2026 · 15 MIN READ",
       title:
         "The Multi-Model Imperative: Operationalizing Multi-Model AI Strategies",
       sub: "A CXO + Engineering Playbook for 2026",
       slug: "the-multi-model-imperative",
     },
     {
-      meta: "MAY 29, 2026 · 5 MIN READ",
+      meta: "MAY 29, 2026 · 7 MIN READ",
       title: "The Executive Framework for AI-Era Program Management",
       sub: "Framework · Program Governance",
       slug: "the-executive-framework-for-ai-era-program-management",
@@ -94,19 +94,19 @@ export default function InsightsSection() {
       slug: "the-rise-of-the-architectural-ceo-moving-past-the-ai-hype-into-structural-reinvention",
     },
     {
-      meta: "TREND WATCH",
+      meta: "JUNE 5, 2026 · 8 MIN READ",
       title: "The Rise of Strategic Human Capital",
       sub: "Human Capital · AI",
       slug: "trend-watch-the-rise-of-strategic-human-capital",
     },
     {
-      meta: "CASE STUDY",
+      meta: "JUNE 15, 2026 · 8 MIN READ",
       title: "Operationalizing Open Models in the Enterprise",
       sub: "LLM Strategy",
       slug: "case-study-operationalizing-open-models-in-the-enterprise",
     },
     {
-      meta: "FINANCIAL SERVICES",
+      meta: "JUNE 11, 2026 · 30 MIN READ",
       title: "Operationalizing Financial Services AI",
       sub: "Industry Playbook",
       slug: "operationalizing-financial-services-ai",
