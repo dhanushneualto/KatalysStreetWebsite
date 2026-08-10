@@ -21,15 +21,29 @@ const renderWixRichContent = (nodes: any[]) => {
         <p key={index} className="mb-6 leading-relaxed text-zinc-800">
           {node.nodes?.map((textNode: any, i: number) => {
             const isBold = textNode.textData?.decorations?.some((d: any) => d.type === "BOLD");
+            const isLink = textNode.textData?.decorations?.some((d: any) => d.type === "LINK");
+            const linkUrl = isLink ? textNode.textData.decorations.find((d: any) => d.type === "LINK")?.link?.url : null;
+
+            const textContent = textNode.textData?.text;
+
+            if (linkUrl) {
+              return (
+                <a key={i} href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
+                  {textContent}
+                </a>
+              );
+            }
+
             return (
               <span key={i} className={isBold ? "font-bold text-black" : ""}>
-                {textNode.textData?.text}
+                {textContent}
               </span>
             );
           })}
         </p>
       );
     }
+
     if (node.type === "HEADING") {
       const text = node.nodes?.map((n: any) => n.textData?.text).join("") || "";
       const level = node.headingData?.level || 2;
@@ -38,19 +52,42 @@ const renderWixRichContent = (nodes: any[]) => {
       if (level === 3) return <h3 key={index} className="text-2xl font-bold mt-10 mb-4">{text}</h3>;
       return <h4 key={index} className="text-xl font-bold mt-8 mb-4">{text}</h4>;
     }
-    if (node.type === "BULLETED_LIST") {
+
+    if (node.type === "BULLETED_LIST" || node.type === "ORDERED_LIST") {
+      const ListTag = node.type === "ORDERED_LIST" ? "ol" : "ul";
+      const listStyle = node.type === "ORDERED_LIST" ? "list-decimal" : "list-disc";
+      
       return (
-        <ul key={index} className="list-disc pl-6 mb-8 space-y-2 text-zinc-800">
-          {node.nodes?.map((listItem: any, i: number) => (
-            <li key={i}>
-              {listItem.nodes?.map((p: any) => 
-                p.nodes?.map((t: any, j: number) => <span key={j}>{t.textData?.text}</span>)
-              )}
-            </li>
-          ))}
-        </ul>
+        <React.Fragment key={index}>
+          {node.heading && <h4 className="font-bold mt-4 mb-2">{node.heading}</h4>}
+          <ListTag className={`${listStyle} pl-6 mb-8 space-y-2 text-zinc-800`}>
+            {node.nodes?.map((listItem: any, i: number) => (
+              <li key={i}>
+                {listItem.nodes?.map((p: any) => 
+                  p.nodes?.map((t: any, j: number) => <span key={j}>{t.textData?.text}</span>)
+                )}
+              </li>
+            ))}
+          </ListTag>
+        </React.Fragment>
       );
     }
+
+    // ⚡ THE CATCH-ALL SAFETY NET: If Wix uses a custom block for references/footnotes
+    if (node.nodes) {
+      const extractedText = node.nodes
+        .map((n: any) => n.textData?.text || n.nodes?.map((sub: any) => sub.textData?.text).join(""))
+        .join(" ");
+
+      if (extractedText.trim()) {
+        return (
+          <div key={index} className="mb-4 text-zinc-700">
+            {extractedText}
+          </div>
+        );
+      }
+    }
+
     return null;
   });
 };
