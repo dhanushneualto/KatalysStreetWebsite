@@ -4,6 +4,13 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient, OAuthStrategy, media } from "@wix/sdk";
 import { posts } from "@wix/blog";
+const authorDictionary: Record<string, string> = {
+  "2a4917d2-e98e-4251-84be-c03538fc4de9": "Rajesh Koppula", // The ID from your screenshot
+  "64c00ea8-15cb-489d-a602-d377f0e2c446": "Maulishri Bhandari",
+  "1709c805-e1e0-46e5-800c-9a451d037bf3": "Serge kadjo",
+  "52c5c192-2e05-4bf4-bc19-7594ae7c685c": "Angel Garza",
+
+};
 
 const wixClient = createClient({
   modules: { posts },
@@ -91,6 +98,7 @@ export default function BlogListingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogPosts.map((post) => {
+            console.log("Raw Post Data:", post); // ⚡ Add this line!
             const rawImageUrl = post.coverMedia?.image || post.media?.wixMedia?.image;
             const finalImageUrl = rawImageUrl ? media.getImageUrl(rawImageUrl).url : "";
 
@@ -113,7 +121,7 @@ export default function BlogListingPage() {
                     <div>
                       {/* ⚡ AUTHOR, DATE & READ TIME METADATA */}
                       <div className="mb-4 flex items-center justify-between text-xs text-zinc-500 font-medium">
-                        <span>{post.authorName || "Rajesh Koppula"}</span>
+                        <span>{authorDictionary[post.memberId] || "Katalyst Street"}</span>
                         <span>
                          {post.firstPublishedDate && (
   <p className="text-sm text-zinc-500 mt-1">

@@ -6,8 +6,8 @@ import Link from "next/link";
 
 interface WhitePaper {
   tag?: string;
-  date: string;
-  readTime: string;
+  date?: string;
+  readTime?: string;
   title: string;
   desc: string;
   url?: string;
@@ -27,17 +27,15 @@ export default function InsightsSection() {
 
   const whitePapers: WhitePaper[] = [
     {
-      date: "July, 2026",
-      readTime: "12 Min Read",
+      date: "May 29, 2026",
+      readTime: "12 Min Read (WHITE PAPER)",
       title:
-        "Modernizing the Payment Stack with Production-Grade AI",
-      desc: "For decades, digital payment infrastructure operated on deterministic, rigid logic: hardcoded routing tables, static fraud rules, and manual dispute resolution workflows. ",
-      slug: "case-study-modernizing-the-payment-stack-with-production-grade-ai",
+        "The PID (Project Initiation Document) Is the Most Important Artifact in Building New Agentic Enterprise Workflows",
+      desc: "Katalyst Street makes the case for Governance-as-Code (GaaC) at the point of project initiation — and, consequently, the control plane of trustworthy enterprise-grade agentic workflows. ",
+      slug: "the-pid-project-initiation-document-is-the-most-important-artifact-in-building-new-agentic-enterprise-workflows",
     },
     {
       tag: "Featured · C-Suite Playbook",
-      date: "May 20, 2026",
-      readTime: "12 Min Read",
       title:
         "From Shadow AI to Agentic Intelligence: The C-Suite Playbook for 2026",
       desc: "A practical governance roadmap for boards and executives confronting unsanctioned AI usage across their organizations.",
@@ -45,8 +43,6 @@ export default function InsightsSection() {
     },
     {
       tag: "OptiMax · Executive Playbook",
-      date: "May 15, 2026",
-      readTime: "5 Min Read",
       title:
         "The Executive Playbook: Transforming Marketing from a Cost Center to an AI-Driven Profitability Engine",
       desc: "How AI-native revenue intelligence repositions marketing as a measurable profit driver.",
@@ -54,8 +50,6 @@ export default function InsightsSection() {
     },
     {
       tag: "OptiMax · Digital Strategy",
-      date: "May 10, 2026",
-      readTime: "5 Min Read",
       title:
         "How Can Data and AI Transform Marketing Organizations in the Digital Age?",
       desc: "A framework for modernizing marketing operations with data and AI at the core.",
@@ -63,8 +57,6 @@ export default function InsightsSection() {
     },
     {
       tag: "DeltaMax · Data Trust",
-      date: "May 04, 2026",
-      readTime: "4 Min Read",
       title:
         "Is Your Data Pipeline a Black Box? How DeltaMax Illuminates Your Data Quality",
       desc: "Why 'unknown unknowns' in enterprise pipelines are the real threat to AI investment — and how proactive monitoring changes the equation.",
@@ -139,7 +131,7 @@ export default function InsightsSection() {
       </div>
       <div className="space-y-6 w-full">
         <span className="text-[10px] font-black tracking-[0.25em] text-zinc-900 uppercase block pl-1">
-          FEATURED WHITE PAPERS
+          FEATURED WHITE PAPERS AND BLOGS
         </span>
 
         <div className="w-full bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-8 md:p-12 min-h-[340px] flex flex-col justify-between relative overflow-hidden">
@@ -202,12 +194,24 @@ export default function InsightsSection() {
             </div>
 
             {/* ⚡ UPDATED: Changed from standard <a> to Next.js <Link> for internal routing via slugs */}
-            <Link
-              href={`/blog/${whitePapers[currentSlide].slug}`}
-              className="text-xs font-bold text-zinc-900 cursor-pointer hover:underline uppercase tracking-wider"
-            >
+            {whitePapers[currentSlide].title.toUpperCase().includes("PID")  ? (
+           <a 
+  href="/PID.pdf" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  className="your-existing-button-classes-here"
+>
               Read White Paper →
-            </Link>
+            </a>
+            ) : (
+              // ✍️ THE BLOG LINK (Internal Routing)
+              <Link 
+                href={`/blog/${whitePapers[currentSlide].slug}`}
+                className="text-xs font-bold text-zinc-900 uppercase tracking-wider hover:underline transition-all"
+              >
+                Read Blog →
+              </Link>
+            )}
           </div>
         </div>
       </div>

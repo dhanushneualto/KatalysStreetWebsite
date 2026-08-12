@@ -14,34 +14,40 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark " >
+    <html lang="en" className="dark">
       <body>
         {/* 
-          ✅ GA4 GTAG – Load the external script asynchronously 
-          "afterInteractive" loads after page becomes interactive
+          ✅ GTM (noscript) Fallback 
+          Placed immediately after the opening <body> tag for users with JS disabled 
         */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-V35CD4WFTK"
-          strategy="afterInteractive"
-        />
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-WRW3PPHK"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
 
         {/* 
-          ✅ GA4 CONFIGURATION – Inline script that runs after the external script 
-          The 'id' prevents duplication during hot-reload 
+          ✅ GTM Script 
+          Uses Next.js Script component to inject into the document safely
         */}
         <Script
-          id="ga4-config"
+          id="google-tag-manager"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-V35CD4WFTK');
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','GTM-WRW3PPHK');
             `,
           }}
         />
-         <SmoothScroll />
+
+        <SmoothScroll />
         {children}
       </body>
     </html>
