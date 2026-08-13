@@ -130,10 +130,24 @@ export default function InsightsSection() {
         </h2>
       </div>
       <div className="space-y-6 w-full">
-        <span className="text-[10px] font-black tracking-[0.25em] text-zinc-900 uppercase block pl-1">
-          FEATURED WHITE PAPERS AND BLOGS
+       <span className="text-[12px] font-black tracking-[0.25em] text-zinc-900 uppercase block pl-1">
+          FEATURED{" "}
+          <a 
+            href="/PID.pdf" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block hover:-translate-y-[2px] hover:text-black transition-transform duration-300 ease-out underline decoration-zinc-900/30 hover:decoration-black underline-offset-4"
+          >
+            WHITE PAPERS
+          </a>
+          {" "}AND{" "}
+          <Link 
+            href="/blog" 
+            className="inline-block hover:-translate-y-[2px] hover:text-black transition-transform duration-300 ease-out underline decoration-zinc-900/30 hover:decoration-black underline-offset-4"
+          >
+            BLOGS
+          </Link>
         </span>
-
         <div className="w-full bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-8 md:p-12 min-h-[340px] flex flex-col justify-between relative overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -193,19 +207,32 @@ export default function InsightsSection() {
               </button>
             </div>
 
-            {/* ⚡ UPDATED: Changed from standard <a> to Next.js <Link> for internal routing via slugs */}
-            {whitePapers[currentSlide].title.toUpperCase().includes("PID")  ? (
-           <a 
-  href="/PID.pdf" 
-  target="_blank" 
-  rel="noopener noreferrer"
-  className="your-existing-button-classes-here"
->
-              Read White Paper →
-            </a>
+            {/* ⚡ UPDATED: Robust Conditional Logic block with flex-col wrapper */}
+            {whitePapers[currentSlide].title.toUpperCase().includes("PID") ? (
+              // 📄 THE WHITEPAPER & REAL-WORLD LINKS (Wrapped in a single div so they stack)
+              <div className="flex flex-col items-end gap-2 mt-2 md:mt-0">
+                <a
+                  href="/PID.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold text-zinc-900 uppercase tracking-wider hover:underline transition-all"
+                >
+                  Read White Paper →
+                </a>
+
+                {/* 🚀 THE PRACTICAL IMPLEMENTATION LINK */}
+                <a
+                  href="https://pmo-architect-839982691485.us-east1.run.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] md:text-xs font-bold text-zinc-900  uppercase tracking-wider hover:underline transition-all"
+                >
+                  View Practical Implementation Of white Paper →
+                </a>
+              </div>
             ) : (
               // ✍️ THE BLOG LINK (Internal Routing)
-              <Link 
+              <Link
                 href={`/blog/${whitePapers[currentSlide].slug}`}
                 className="text-xs font-bold text-zinc-900 uppercase tracking-wider hover:underline transition-all"
               >
@@ -232,7 +259,6 @@ export default function InsightsSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full items-stretch cursor-pointer">
           {blogNotes.map((note, idx) => (
-            
             <Link
               key={idx}
               href={`/blog/${note.slug}`}

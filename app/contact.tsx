@@ -53,14 +53,19 @@ export default function ContactSection() {
     {
       title: "Schedule Executive Briefing",
       desc: "Meet with a Katalyst Street advisor to discuss your AI transformation priorities.",
+     href: "#contact-form",
+      
     },
     {
       title: "Take AI Readiness Assessment",
       desc: "Understand where your organization sits on the AI transformation journey.",
+      href: "#contact-form",
+      
     },
     {
       title: "Read the AI Governance White Paper",
       desc: "A practical guide for enterprise leaders navigating AI governance and risk.",
+      href: "/PID.pdf", 
     },
   ];
 
@@ -85,11 +90,14 @@ export default function ContactSection() {
       </div>
 
       {/* THREE INTERACTIVE ACTION OPTIONS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-24 items-stretch">
+     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-24 items-stretch">
         {actionCards.map((card, idx) => (
-          <div
+          <a
             key={idx}
-            className="bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-6 md:p-8 flex flex-col justify-start text-left cursor-pointer group hover:border-amber-500/40 transition-all duration-300"
+            href={card.href || "#"}
+            target={card.href?.includes(".pdf") ? "_blank" : "_self"}
+            rel={card.href?.includes(".pdf") ? "noopener noreferrer" : ""}
+            className="bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-800/40 rounded-3xl p-6 md:p-8 flex flex-col justify-start text-left cursor-pointer group hover:border-amber-500/40 transition-all duration-300 block"
           >
             <h4 className="text-lg font-black text-black tracking-tight leading-snug mb-3 transition-colors">
               {card.title}
@@ -97,12 +105,12 @@ export default function ContactSection() {
             <p className="text-xs text-zinc-500 dark:text-zinc-900 font-dark leading-relaxed">
               {card.desc}
             </p>
-          </div>
+          </a>
         ))}
       </div>
 
       {/* SECTION 2: ADVISORY INTAKE DATA HUB FORM MODULE */}
-      <div className="max-w-4xl mx-auto bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-900/40 rounded-3xl p-8 md:p-12 text-left shadow-2xl shadow-black/[0.01]">
+      <div id="contact-form" className=" scroll-mt-32 max-w-4xl mx-auto bg-zinc-50 dark:bg-zinc-900/10 border border-zinc-200/60 dark:border-zinc-900/40 rounded-3xl p-8 md:p-12 text-left shadow-2xl shadow-black/[0.01]">
         <div className="space-y-2 mb-10">
           <span className="text-[10px] font-black tracking-[0.2em] text-black uppercase block">
             ADVISORY INTAKE
@@ -130,6 +138,7 @@ export default function ContactSection() {
                 </label>
                 <input
                   type="text"
+                  id="fullName"
                   name="name"
                   required
                   placeholder="e.g. John Doe"

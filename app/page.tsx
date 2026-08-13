@@ -508,15 +508,37 @@ export default function KatalystStreetDemo() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center w-full max-w-full gap-1.5 sm:gap-3 md:gap-4 pt-4 sm:pt-6 px-1 ">
+           <div className="flex flex-wrap items-center justify-center w-full max-w-full gap-1.5 sm:gap-3 md:gap-4 pt-4 sm:pt-6 px-1 ">
               {[
                 { label: "Schedule Executive Briefing", href: "#contact" },
                 { label: "Take AI Readiness Assessment", href: "#contact" },
-                { label: "Read AI Governance White Paper", href: "#" }, 
+                { label: "Read AI Governance White Paper", href: "/PID.pdf" }, 
               ].map((action) => (
                 <a
                   key={action.label}
                   href={action.href}
+                  target={action.href.includes(".pdf") ? "_blank" : "_self"}
+                  rel={action.href.includes(".pdf") ? "noopener noreferrer" : ""}
+                  // THE NEW CLICK HANDLER
+                  onClick={(e) => {
+                    if (action.href.startsWith("#")) {
+                      e.preventDefault(); // Stop the default jumpy scroll
+                      const targetId = action.href.replace("#", "");
+                      const elem = document.getElementById(targetId);
+                      
+                      if (elem) {
+                        // Get the exact position of the form
+                        const elementPosition = elem.getBoundingClientRect().top + window.scrollY;
+                        //  Subtract 120 pixels to leave breathing room 
+                        const offsetPosition = elementPosition - 150;
+                        
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: "smooth"
+                        });
+                      }
+                    }
+                  }}
                   className="px-2 sm:px-4 md:px-5 py-1 sm:py-2 rounded-full border-2 border-black font-black text-[8px] sm:text-sm md:text-base text-black bg-transparent transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 select-none text-center max-w-full whitespace-normal sm:whitespace-nowrap touch-manipulation cursor-pointer inline-block"
                 >
                   {action.label}
