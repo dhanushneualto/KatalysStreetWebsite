@@ -620,7 +620,7 @@ export default function KatalystStreetDemo() {
                       light: "— Enterprise AI Governance Platform",
                     },
                     { bold: "DeltaMax", light: "— Trusted Data Intelligence" },
-                    { bold: "PMO-Max", light: "— Risk Controls & Compliance" },
+                    { bold: "PMO-Max", light: "— Agentic Control Plane - AI Governance and Compliance" },
                     {
                       bold: "Change Management & Human Capital Enablement",
                       light: "",
