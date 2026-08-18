@@ -164,7 +164,7 @@ export default function PlatformShowcase() {
         </p>
       </div>
 
-      {/* 🧭 HORIZONTAL NAVIGATION TRACK */}
+      {/*  HORIZONTAL NAVIGATION TRACK */}
       <div className="w-full mt-8 sm:mt-10 md:mt-12 flex flex-col sm:flex-row gap-2 sm:gap-3 items-center select-none border-b border-zinc-200/60 dark:border-zinc-800/40 pb-4 sm:pb-6">
         {platformKeys.map((key) => {
           const item = platformsData[key];
@@ -229,7 +229,7 @@ export default function PlatformShowcase() {
         </div>
       )}
 
-      {/* ⚡ STACKED SHOWCASE CONTENT VIEWPORT */}
+      {/*  STACKED SHOWCASE CONTENT VIEWPORT */}
       <div
         className="w-full mt-6 sm:mt-8 bg-zinc-50/50 dark:bg-zinc-950/10 border border-zinc-200/50 dark:border-zinc-900 rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm flex flex-col gap-6 sm:gap-8"
         onTouchStart={handleTouchStart}
@@ -245,7 +245,7 @@ export default function PlatformShowcase() {
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="w-full flex flex-col gap-6 sm:gap-8"
           >
-            {/* 🎞️ TOP ITEM: Full-Width Widescreen Video App Window HUD */}
+            {/*  TOP ITEM: Full-Width Widescreen Video App Window HUD */}
             <div className="w-full flex flex-col bg-[#111215] border border-zinc-800 rounded-xl overflow-hidden shadow-2xl relative">
               {/* Mock Window Terminal Topbar */}
               <div className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 bg-[#17191E] border-b border-zinc-800 select-none z-10">
@@ -316,7 +316,7 @@ export default function PlatformShowcase() {
               </div>
             </div>
 
-            {/* ⚡ Action Operations CTAs Bar */}
+            {/*  Action Operations CTAs Bar */}
             <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-zinc-200/30 dark:border-zinc-800/30">
               <button
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}

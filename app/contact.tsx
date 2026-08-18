@@ -16,39 +16,32 @@ export default function ContactSection() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [result, setResult] = useState(""); // ⚡  Web3Forms result text handler state
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setResult("Sending...");
-
-    // Constructing standard Web3Forms key parameters mapping layout payload
-    const formPayload = new FormData();
-    formPayload.append("access_key", "ed2f908a-1c7a-42c7-8f18-6515ea70abb9");
-    formPayload.append("name", formData.fullName);
-    formPayload.append("email", formData.businessEmail);
-    formPayload.append("organization", formData.organization);
-    formPayload.append("position", formData.position);
-    formPayload.append("interest", formData.interest);
-    formPayload.append("message", formData.message);
+    setResult("Sending securely..."); // Optional loading state
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formPayload,
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setResult("Success!");
         setIsSubmitted(true);
+        setResult(""); // Clear the loading state
       } else {
         setResult("Something went wrong. Please try again.");
       }
     } catch (error) {
-      setResult("Network error. Please try again later.");
+      console.error("Submission error:", error);
+      setResult("A network error occurred. Please try again later.");
     }
   };
-
   const actionCards = [
     {
       title: "Schedule Executive Briefing",
@@ -209,7 +202,7 @@ export default function ContactSection() {
                 <label className="text-[11px] font-bold tracking-wide text-zinc-600 dark:text-zinc-900 uppercase">
                   Primary Area of Interest*
                 </label>
-                <select
+               <select
                   name="interest"
                   value={formData.interest}
                   onChange={(e) =>
@@ -217,63 +210,61 @@ export default function ContactSection() {
                   }
                   className="w-full bg-white dark:bg-zinc-500 border border-zinc-200 dark:border-zinc-500/80 rounded-xl px-4 py-3.5 text-sm text-black dark:text-white outline-none focus:border-zinc-500 transition-colors cursor-pointer appearance-none"
                 >
-                  <option value="StrategyMax">
+                  <option value="" disabled>Select your primary interest...</option>
+                  <option value="AI Prioritization, Roadmaps, Audits & Advisory — StrategyMax">
                     AI Prioritization, Roadmaps, Audits & Advisory — StrategyMax
                   </option>
-                  <option value="DeltaMax">
+                  <option value="Strategy - AI Governance - PMO-Max">
                     Strategy - AI Governance - PMO-Max
                   </option>
-                  <option value="OptiMax">
+                  <option value="Foundations - Data Quality & Trust Platform - DeltaMax">
                     Foundations - Data Quality & Trust Platform - DeltaMax
                   </option>
-                  <option value="PMOMax">Foundations - Data Security</option>
-                  <option value="PMOMax">
+                  <option value="Foundations - Data Security">Foundations - Data Security</option>
+                  <option value="Foundations - Data Ingestion- ETL">
                     Foundations - Data Ingestion- ETL
                   </option>
-                  <option value="PMOMax">
+                  <option value="Foundations - LLM Strategy -Open/Multi Models">
                     Foundations - LLM Strategy -Open/Multi Models
                   </option>
-                  <option value="PMOMax">Foundations - Agetic Strategy </option>
-                  <option value="PMOMax">
-                    Foundations - ChangeManagement{" "}
+                  <option value="Foundations - Agentic Strategy">Foundations - Agentic Strategy</option>
+                  <option value="Foundations - ChangeManagement">
+                    Foundations - ChangeManagement
                   </option>
-                  <option value="PMOMax">
+                  <option value="Foundations - Human Capital & AI">
                     Foundations - Human Capital & AI
                   </option>
-                  <option value="PMOMax">
+                  <option value="Foundations - Cybersecurity & vCISO">
                     Foundations - Cybersecurity & vCISO
                   </option>
-                  <option value="PMOMax">Build - AI Engineering </option>
-                  <option value="PMOMax">Build - Cloud Engineering</option>
-                  <option value="PMOMax">Build - Engineering Consulting</option>
-                  <option value="PMOMax">Build - Testing</option>
-                  <option value="PMOMax">Build - Automation</option>
-                  <option value="PMOMax">
-                    Scale - Marketing Intelligence & Execution Platform -
-                    OptiMax
+                  <option value="Build - AI Engineering">Build - AI Engineering</option>
+                  <option value="Build - Cloud Engineering">Build - Cloud Engineering</option>
+                  <option value="Build - Engineering Consulting">Build - Engineering Consulting</option>
+                  <option value="Build - Testing">Build - Testing</option>
+                  <option value="Build - Automation">Build - Automation</option>
+                  <option value="Scale - Marketing Intelligence & Execution Platform - OptiMax">
+                    Scale - Marketing Intelligence & Execution Platform - OptiMax
                   </option>
-                  <option value="PMOMax">
-                    Scale - Marketing Intelligence - Media Mix Modeling Platform
-                    - BudgetMax
+                  <option value="Scale - Marketing Intelligence - Media Mix Modeling Platform - BudgetMax">
+                    Scale - Marketing Intelligence - Media Mix Modeling Platform - BudgetMax
                   </option>
-                  <option value="PMOMax">Scale - Financial Services</option>
-                  <option value="PMOMax">Scale - Insurance</option>
-                  <option value="PMOMax">Scale - Healthcare</option>
-                  <option value="PMOMax">Scale - Manufacturing</option>
-                  <option value="PMOMax">Scale - Retail</option>
-                  <option value="PMOMax">Scale - Other Vertical</option>
-                  <option value="PMOMax">Optimize - FinOps</option>
-                  <option value="PMOMax">
-                    Optimize - Marketing Intelligence & Execution Platform -
-                    OptiMax
+                  <option value="Scale - Financial Services">Scale - Financial Services</option>
+                  <option value="Scale - Insurance">Scale - Insurance</option>
+                  <option value="Scale - Healthcare">Scale - Healthcare</option>
+                  <option value="Scale - Manufacturing">Scale - Manufacturing</option>
+                  <option value="Scale - Retail">Scale - Retail</option>
+                  <option value="Scale - Other Vertical">Scale - Other Vertical</option>
+                  <option value="Optimize - FinOps">Optimize - FinOps</option>
+                  <option value="Optimize - Marketing Intelligence & Execution Platform - OptiMax">
+                    Optimize - Marketing Intelligence & Execution Platform - OptiMax
                   </option>
-                  <option value="PMOMax">General Inquiry</option>
-                  <option value="PMOMax">Partnerships</option>
-                  <option value="PMOMax">Practice- GCP</option>
-                  <option value="PMOMax">Practice-Anthropic</option>
-                  <option value="PMOMax">Practice-Snowflake</option>
-                  <option value="PMOMax">Practice-Databricks</option>
-                  <option value="PMOMax">Practice-Tally</option>
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Partnerships">Partnerships</option>
+                  <option value="Practice - GCP">Practice - GCP</option>
+                  <option value="Practice - Anthropic">Practice - Anthropic</option>
+                  <option value="Practice - Snowflake">Practice - Snowflake</option>
+                  <option value="Practice - Databricks">Practice - Databricks</option>
+                  <option value="Practice - Tally">Practice - Tally</option>
                 </select>
               </div>
             </div>

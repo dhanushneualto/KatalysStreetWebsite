@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body>
         {/* 
-          ✅ GTM (noscript) Fallback 
+           GTM (noscript) Fallback 
           Placed immediately after the opening <body> tag for users with JS disabled 
         */}
         <noscript>
@@ -30,7 +30,7 @@ export default function RootLayout({
         </noscript>
 
         {/* 
-          ✅ GTM Script 
+           GTM Script 
           Uses Next.js Script component to inject into the document safely
         */}
         <Script
