@@ -607,7 +607,7 @@ export default function KatalystStreetDemo() {
             <div className="bg-zinc-50 dark:bg-zinc-300/40 border border-zinc-200/60 rounded-2xl p-4 sm:p-8 md:p-12 md:pr-16 flex flex-col justify-between">
               <div>
                 <h3 className="font-black tracking-widest uppercase text-black mb-4 md:mb-8 text-xs sm:text-sm md:text-base">
-                  THE KATALYST SOLUTION
+                  THE KATALYST STREET SOLUTION
                 </h3>
                 <ul className="space-y-2 md:space-y-4 text-xs sm:text-sm md:text-base font-dark text-black">
                   {[
